@@ -5,7 +5,9 @@
 
 <h1 style="border-bottom:none">LiquidHaskell: Liquid Types for Haskell</b>
 
-<h4 style="border-bottom:none"><i>Niki Vazou (University of California, San Diego)</i></h4>
+<h4 style="text-align:center"><i>Niki Vazou   </i></h4>
+<h5 style="text-align:center"><i>(UC San Diego)</i></h5>
+<h5 style="text-align:center"><i>(Awake Networks)</i></h5>
 
 <br>
 <br>
@@ -51,32 +53,51 @@ main = putStrLn "Easter Egg: to force Makefile"
 
 
 
-Division By Zero
-----------------
+The Heartbleed Bug.
+------------------
 
 
 <div class="fragment">
 \begin{spec}
-λ> let average xs = sum xs `div` length xs
-
-λ> average [100, 202, 300]
-200
+λ> :m +Data.Text Data.Text.Unsafe
+λ> let text = pack "Niki"
+λ> :t takeWord16
+    takeWord16 :: Text -> Int -> Text
 \end{spec}
 </div>
 
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+<div class="fragment">
+\begin{spec}
+λ> takeWord16 True text
+
+<interactive>:5:12:
+    Couldn't match expected type ‘Int’ with actual type ‘Bool’
+    In the first argument of ‘takeWord16’, namely ‘True’
+    In the expression: takeWord16 True text
+\end{spec}
+</div>
+
+<br>
+<br>
+<br>
+<br>
 <br>
 
 <div class="fragment">
 \begin{spec}
-λ> average []
-*** Exception: divide by zero
+λ>  takeWord16 10 text
+"Niki\33624\5479\SOH\NUL\60480\5115"
 \end{spec}
-
-
 </div>
 
-<br>
-<br>
+
 <br>
 <br>
 <br>
@@ -95,8 +116,8 @@ Partial Functions
 
 <div class="fragment">
 \begin{spec}
-λ> head "compose"
-'c'
+λ> head "Facebook"
+'F'
 \end{spec}
 </div>
 
@@ -128,19 +149,20 @@ Fuctional Correctness
 ---------------------
 
 <div class="fragment">
+<br>
 \begin{spec}
-λ> sort [42, 5, 3, 1]
-[5, 3]
+λ> fib 1 <= fib 42
+False
 \end{spec}
 </div>
 
 <div class="fragment">
-<br>
 \begin{spec}
-λ> (incr . incr) 40
-0
+λ> mapReduce (+) (map fib) [1..20]
+[5, 3]
 \end{spec}
 </div>
+
 
 <br>
 <br>

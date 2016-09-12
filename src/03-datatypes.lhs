@@ -9,8 +9,10 @@
 {-@ LIQUID "--diff"           @-}
 
 module DataTypes where
+import qualified Data.Text        as T
+import qualified Data.Text.Unsafe as T 
 
-import Prelude hiding (length, sum)
+import Prelude hiding (length, sum, take)
 import qualified Data.Set as S -- hiding (elems, insert)
 
 
@@ -18,14 +20,12 @@ head       :: List a -> a
 tail       :: List a -> List a
 impossible :: String -> a
 avg        :: List Int -> Int
-insert     :: (Ord a) =>  a -> List a -> List a
 
 
 sum :: List Int -> Int 
 sum Emp = 0 
 sum (x ::: xs) = x + sum xs
 infixr 9 :::
-infixr 9 :<:
 
 {-@ data List [length] a = Emp | (:::) {hd :: a, tl :: List a } @-}
 {-@ invariant {v: List a | 0 <= length v} @-}
@@ -240,6 +240,10 @@ tail _          = impossible "tail"
 <br>
 <br>
 
+
+Totality Checking in Liquid Haskell 
+------------------------------------
+
 Naming Non-Empty Lists
 ----------------------
 
@@ -317,292 +321,13 @@ avg xs     = safeDiv total n
 **Q:** Write type for `avg` that verifies safe division.
 
 
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-Multiple Measures
-=================
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-SMT Solvers Reason About Sets
------------------------------
-
-<div class="fragment">
-
-<br>
-
-Hence, we can write *Set-valued* measures
-
-<br>
-
-Using the `Data.Set` API for convenience
-
-<br>
-
-\begin{spec} <div/>
-import qualified Data.Set as S
-\end{spec}
-
-</div>
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Specifying A `List`s Elements
------------------------------
-
-<br>
-
+Safe List Indexing
+---------------------------------
 \begin{code}
-{-@ measure elems @-}
-elems :: (Ord a) => List a -> S.Set a
-elems Emp      = S.empty
-elems (x:::xs) = addElem x xs
-
-{-@ inline addElem @-}
-addElem :: (Ord a) => a -> List a -> S.Set a
-addElem x xs = S.union (S.singleton x) (elems xs)
-\end{code}
-
-<br>
-
-<div class="fragment">
-`inline` lets us reuse Haskell terms in refinements.
-</div>
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-Multiple Measures
--------------------------------
-
-<br>
-
-*Strengthens* type of data constructor
-
-<br>
-
-<div class="fragment">
-
-\begin{spec} <div/>
-data List a where
-
-  Emp   :: {v:List a | length v == 0 
-                     && elems v == S.empty}
-
-
-  (:::) :: x:a -> xs:List a
-        -> {v:List a | length v == 1 + length xs
-                     && elems v == addElem v xs  }
-\end{spec}
-
-</div>
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-Example : Inserting Elements
-----------------------------
-
-<br>
-\begin{code}
-{-@ insert :: x:a -> xs:List a 
-           -> {v : List a | length v == length xs + 1
-                          && elems v == addElem x xs  } @-}
-
-insert x Emp = x ::: Emp
-insert x (y ::: ys)
-  | x <= y    = x ::: y ::: ys
-  | otherwise = y ::: insert x ys 
-\end{code}
-
-<br>
-<br>
-
-Can we specify **sortedness**?
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-
-
-Refining Data Types
-===================
-
-
-<br>
-<br>
-
-&nbsp; &nbsp; *Make illegal states unrepresentable*
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-
-Example: Sorted Lists
-----------------------
-
-<br>
-
-Lets **define** a type for ordered lists
-
-<br>
-
-\begin{code}
-data OList a =
-      OEmp
-    | (:<:) { oHd :: a
-            , oTl :: OList a }
-\end{code}
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-Ordered Lists
--------------
-
-<br>
-
-Lets **refine** the type to enforce **order**
-
-<br>
-
-\begin{code}
-{-@ data OList a =
-      OEmp
-    | (:<:) { oHd :: a
-            , oTl :: OList {v:a | oHd <= v}} @-}
-\end{code}
-
-<br>
-
-Head `oHd` is **smaller than every value** `v` in tail `oTl`
-
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-Ordered Lists
--------------
-
-<br>
-
-*Illegal values unrepresentable*
-
-<br>
-
-\begin{code}
-okList :: OList Int
-okList = 1 :<: 2 :<: 3 :<: OEmp
-
-badList :: OList Int
-badList = 1 :<: 3 :<: 2 :<: OEmp
+take :: Int -> List a -> List a 
+{-@ take :: i:Int -> xs:List a -> List a @-} 
+take i (x ::: xs) = if i == 0 then Emp else x ::: (take (i-1) xs)
+take i Emp        = impossible "Out of bounds indexing!" 
 \end{code}
 
 
@@ -619,91 +344,20 @@ badList = 1 :<: 3 :<: 2 :<: OEmp
 <br>
 <br>
 
+Totality Checking 
 
-Exercise: Insertion Sort
-------------------------
+Example 
+-------
 
-<br>
-
-**Q:** Oops. There's a problem! Can you fix it?
-
-<br>
+HeartBleed
+----------
 
 \begin{code}
-{-@ sortO ::  xs:List a -> OList a @-}
-sortO Emp      = OEmp
-sortO (x:::xs) = insertO x (sortO xs)
-
-{-@ insertO :: x:a -> xs:_  -> OList a @-}
-insertO x (y :<: ys)
-  | x <= y     = y :<: x :<: ys
-  | otherwise  = y :<: insertO x ys
-insertO x _    = x :<: OEmp
+{-@ assume T.takeWord16 :: i:{Int | 0 <= i } -> {v:Data.Text.Internal.Text | i <= slen v} -> Data.Text.Internal.Text
+@-}
+safeTake   = T.takeWord16 2  (T.pack "Niki")
+unsafeTake = T.takeWord16 10 (T.pack "Niki")
 \end{code}
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-
-
-Refinements vs. Full Dependent Types
-------------------------------------
-
-<br>
-
-+ *Limited* to **decidable logics** but ...
-
-+ *Offer* massive amounts of **automation**
-
-<br>
-
-<div class="fragment">
-
-Compare with `insertionSort` in:
-
-+ [Haskell-Singletons](https://github.com/goldfirere/singletons/blob/master/tests/compile-and-dump/InsertionSort/InsertionSortImp.hs)
-+ [Idris](https://github.com/davidfstr/idris-insertion-sort/tree/master)
-+ [Coq](http://www.enseignement.polytechnique.fr/informatique/INF551/TD/TD5/aux/Insert_Sort.v)
-
-</div>
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-
-Unfinished Business
--------------------
-<br>
-
-**Problem:** How to reason about `elems` and `lenght` of an `OList`?
-
-<br>
-
-**Solution:** Make `OList` an instance of `List` using Abstract Refinements!
 
 <br>
 <br>
