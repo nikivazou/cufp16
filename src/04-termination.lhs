@@ -8,7 +8,7 @@
 {-  LIQUID "--totality"       @-}
 {-@ LIQUID "--diff"           @-}
 
-module AbstractRefinements () where
+module Termination  where
 
 
 import Prelude hiding (length)
@@ -47,7 +47,7 @@ length (_ ::: xs) = 1 + length xs
 
 
 
-Abstract Refinements
+Termination
 ====================
 
 <br>
