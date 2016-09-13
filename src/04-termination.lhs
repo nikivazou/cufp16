@@ -4,36 +4,16 @@
 {-# LANGUAGE TupleSections    #-}
 {-@ LIQUID "--no-warnings"    @-}
 {-@ LIQUID "--short-names"    @-}
-{-@ LIQUID "--no-termination" @-}
-{-  LIQUID "--totality"       @-}
+{-@ LIQUID "--totality"      @-}
 {-@ LIQUID "--diff"           @-}
 
-module Termination  where
+module Termination where
 
+import Prelude hiding (map)
 
-import Prelude hiding (length)
-import qualified Data.Set as S -- hiding (elems, insert)
+fib :: Int -> Int
+map :: (a -> b) -> [a] -> [b]
 
-isort  :: (Ord a) => List a -> List a 
-insert :: (Ord a) => a -> List a -> List a 
-
-infixr 9 ::: 
-
-
-{-@ measure elems @-}
-elems :: (Ord a) => List a -> S.Set a
-elems Emp      = S.empty
-elems (x:::xs) = addElem x xs
-
-{-@ inline addElem @-}
-addElem :: (Ord a) => a -> List a -> S.Set a
-addElem x xs = S.union (S.singleton x) (elems xs)
-
-
-{-@ measure length @-}
-length :: List a -> Int
-length Emp        = 0
-length (_ ::: xs) = 1 + length xs
 
 \end{code}
 
@@ -47,7 +27,7 @@ length (_ ::: xs) = 1 + length xs
 
 
 
-Termination
+Termination Checking
 ====================
 
 <br>
@@ -70,67 +50,21 @@ Termination
 <br>
 
 
-Key Idea
---------
+Why termination Checking?
+-------------------------
 
 <br>
 <br>
 
-*Abstract* The Property Away to make the specification *Modular*!
+LiquidHaskell checks _by default_ that all your functions terminate!
 
+Why?
 
-<br> 
-<br>
-
-Then, *instantiate* the property back to get your specification.
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Ordered Lists
---------------
-
+- It is the _expected_ case!
+- For soundness: [Refinement Types for Haskell](http://goto.ucsd.edu/~nvazou/refinement_types_for_haskell.pdf)
 
 <br> 
 <br>
-
-
-Previously we saw how to refine the list data definition to get ordered lists: 
-
-<br>
-
-\begin{spec}
-{-@ data OList a =
-     OEmp
-   | (:<:) { oHd :: a
-           , oTl :: OList {v:a | oHd <= v}} @-}
-\end{spec}
-
-<br>
-
-Just abstract the property away!
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 <br>
 <br>
 <br>
@@ -142,114 +76,24 @@ Just abstract the property away!
 <br>
 <br>
 
-
-Abstract Refinements on Data Structures
-----------------------------------------
-
-<br>
-
-\begin{code}
-data List a 
-  = Emp
-   | (:::) { hd :: a 
-           , tl :: List a }
-
-{-@ data List a < p :: a -> a -> Prop >
-  = Emp 
-  | (:::) { hd :: a 
-          , tl :: List < p > a< p hd > } @-}
-
--- a < p hd > stands for {v:a | p hd v}
-\end{code}
-
-<br>
-<br>
-Every element of the tail *recursively* satisfies `p` on the head!
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Instantiation of Refinements
+Example: Termination of `fib`
 -----------------------------
 
-Unrefined Lists 
+<br>
+<br>
 \begin{code}
-{-@ type TList a = List <{\x v -> true  }> a @-}
-\end{code}
-Increasing Lists 
-\begin{code}
-{-@ type OList a = List <{\x v -> x <= v}> a @-}
-\end{code}
-Decreasing Lists 
-\begin{code}
-{-@ type DList a = List <{\x v -> v <= x}> a @-}
-\end{code}
-Unique Lists 
-\begin{code}
-{-@ type UList a = List <{\x v -> x /= v}> a @-}
-\end{code}
-
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-Using Abstract Refinements
----------------------------
-
-Use increasing lists 
-
-\begin{code}
-{-@ type OList a = List <{\x v -> x <= v}> a @-}
-\end{code}
-
-to specify insertion sort, as before!
-
-\begin{code}
-{-@ isort ::  xs:List a -> OList a  @-}
-isort Emp      = Emp
-isort (x:::xs) = insert x (isort xs)
-
-{-@ insert :: x:a -> xs:OList a 
-           -> {v : OList a | length v == length xs + 1
-                           && elems v == addElem x xs  } @-}
-insert x (y ::: ys)
-  | x <= y     = x ::: y ::: ys
-  | otherwise  = y ::: insert x ys
-insert x _     = x ::: Emp
+{-@ fib :: i:Int -> Int  @-}
+fib i | i == 0    = 0 
+      | i == 1    = 1 
+      | otherwise = fib (i-1) + fib (i-2)
 \end{code}
 
 <br>
 <br>
+**Q:** Why is there an error?
 <br>
 <br>
+<br> 
 <br>
 <br>
 <br>
@@ -263,73 +107,53 @@ insert x _     = x ::: Emp
 <br>
 
 
-Haskell's list
------------------
+Proving Termination I
+----------------------
 
-<br>
-
-Haskell build-in list comes parameterized for you! 
-
-<br>
-You can just instantiate the abstract refinement! 
-
-<br>
-
-\begin{code}
-{-@ type IList a =  [a]<{\x v -> (x <= v)}>  @-}
-\end{code}
+Liquid Haskell checks a _well founded_ metric decreses at each recursive call. 
 
 
 <br>
-And prove recursive list properties!
+<br>
+_Well founded_ metric:
+
+ - the first integer argument
+<br>
+<br>
+<br> 
 <br>
 <br>
 <br>
 <br>
 <br>
 <br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 
-\begin{code}
-{-@ sort :: (Ord a) => [a] -> IList a  @-}
-sort :: (Ord a) => [a] -> [a]
-sort = mergeAll . sequences
-  where
-    sequences (a:b:xs)
-      | a `compare` b == GT = descending b [a]  xs
-      | otherwise           = ascending  b (a:) xs 
-    sequences [x] = [[x]]
-    sequences []  = [[]]
-    {- descending :: x:a -> IList {v:a | x < v} -> [a] -> [IList a] @-}
-    descending a as (b:bs)
-      | a `compare` b == GT = descending b (a:as) bs
-    descending a as bs      = (a:as): sequences bs
-    {- ascending :: x:a -> (IList {v:a|v>=x} -> IList a) -> [a] -> [IList a] @-}
-    ascending a as (b:bs)
-      | a `compare` b /= GT = ascending b (\ys -> as (a:ys)) bs 
-    ascending a as bs       = as [a]: sequences bs
-    mergeAll [x] = x
-    mergeAll xs  = mergeAll (mergePairs xs)
-    mergePairs (a:b:xs) = merge1 a b: mergePairs xs
-    mergePairs [x]      = [x]
-    mergePairs []       = []
-\end{code}
 
-<div class="hidden">
-    {-@ descending :: x:a -> IList {v:a | x < v} -> [a] -> [IList a] @-}
-    {-@ ascending :: x:a -> (IList {v:a|v>=x} -> IList a) -> [a] -> [IList a] @-}
+User specified Termination Metrics
+-----------------------------------
+
+The first integer is not always decreasing!
 
 \begin{code}
-merge1 (a:as) (b:bs)
- | a `compare` b == GT  = b:merge1 (a:as) bs
- | otherwise            = a:merge1 as (b:bs)
-merge1 [] bs            = bs 
-merge1 as []            = as  
+{-@ range :: lo:Int -> hi:Int -> [Int] / [0] @-} 
+range lo hi
+ | lo < hi = lo : range (lo+1) hi
+ | otherwise = []
 \end{code}
-</div>
+<br>
+<br>
+
+**Q:** Replace `0` with the decreasing metric!
 
 <br>
 <br>
+<br> 
 <br>
 <br>
 <br>
@@ -341,8 +165,230 @@ merge1 as []            = as
 <br>
 <br>
 <br>
+
+Proving Termination 
+----------------------
+
+Liquid Haskell checks a _well founded_ metric decreses at each recursive call. 
+
+
 <br>
 <br>
+_Well founded_ metric:
+
+ - user specified metrics
+ - the first integer argument
+<br>
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+Lexicograohic Termination
+-----------------------------------
+
+Why does Ackermann Function terminate?
+
+
+\begin{code}
+{-@ ack :: m:Int -> n:Int -> Int / [0, 0] @-} 
+ack m n
+  | m == 0 = n + 1
+  | n == 0 = ack (m-1) 1
+  | otherwise = ack (m-1) (ack m (n-1))
+\end{code}
+<br>
+<br>
+
+**Q:** Replace `0` with the decreasing _metrics_!
+
+<br>
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+How about data types?
+-----------------------------------
+
+Map ADTs to integers using measures!
+
+\begin{code}
+{-@ map :: (a -> b) -> [a] -> [b] / [len xs] @-}
+map _ []     = []
+map f (x:xs) = f x : map f xs 
+\end{code}
+<br>
+<br>
+
+But Liquid Haskell knows that!
+
+<br>
+It will use `len` as the default metric to check `x:[a]` decreasing.
+
+<br>
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+How about data types?
+-----------------------------------
+
+Map ADTs to integers using measures!
+
+\begin{code}
+{-@ map :: (a -> b) -> [a] -> [b] / [len xs] @-}
+map _ []     = []
+map f (x:xs) = f x : map f xs 
+\end{code}
+<br>
+<br>
+
+But Liquid Haskell knows that!
+
+<br>
+It will use `len` as the default metric to check `x:[a]` decreasing.
+
+<br>
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Mutual Recursive Functions
+-----------------------------------
+
+Same idea generalizes to mutual recusion. 
+
+\begin{code}
+{-@ isEven :: n:Nat -> Bool / [n] @-}
+{-@ isOdd  :: m:Nat -> Bool / [m] @-}
+
+isEven 0 = True
+isEven n = isOdd (n-1)
+
+isOdd m = not $ isEven m
+\end{code}
+<br>
+<br>
+
+Liquid Haskell does not attempt a guess...
+
+<br>
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Diverging Functions 
+-----------------------------------
+
+
+`Lazy` annotation deactivates termination checking
+
+\begin{code}
+{-@ Lazy repeat @-}
+
+repeat x = x:repeat x 
+\end{code}
+<br>
+<br>
+
+
+<br>
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+Proving Termination 
+----------------------
+
+For non `Lazy` specified functions,
+
+Liquid Haskell checks a _well founded_ metric decreses at each recursive call. 
+
+
+<br>
+<br>
+_Well founded_ metric:
+
+ - user specified _lexocographic_ metrics
+ - the first integer or "sized" argument
+<br>
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 
 Recap
 -----
@@ -353,12 +399,13 @@ Recap
 1. **Refinements:** Types + Predicates
 2. **Subtyping:** SMT Implication
 3. **Measures:** Specify Properties of Data
-4. <div class="fragment">**Abstract Refinements:** Decouple properties from code</div>
+4. <div class="fragment">**Termination Checking</div>
+
 
 <br>
 
 <div class="fragment">
-**Next:**[Bounded Refinements](05-bounded-refinements.html)
+**Next:** [Refinement Reflection](05-refinement-reflection.html) : Put terminating functions in the logic!
 </div>
 
 <br>

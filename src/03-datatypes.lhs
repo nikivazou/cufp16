@@ -18,8 +18,11 @@ import qualified Data.Set as S -- hiding (elems, insert)
 
 head       :: List a -> a
 tail       :: List a -> List a
+headt      :: List a -> a
+tailt      :: List a -> List a
 impossible :: String -> a
 avg        :: List Int -> Int
+take       :: Int -> List a -> List a 
 
 
 sum :: List Int -> Int 
@@ -240,10 +243,6 @@ tail _          = impossible "tail"
 <br>
 <br>
 
-
-Totality Checking in Liquid Haskell 
-------------------------------------
-
 Naming Non-Empty Lists
 ----------------------
 
@@ -269,6 +268,45 @@ A convenient *type alias*
 <br>
 <br>
 <br>
+
+
+Totality Checking in Liquid Haskell 
+------------------------------------
+
+
+<br>
+
+
+<div class="fragment">
+\begin{code}
+{-@ LIQUID "--totality" @-}
+
+{-@ headt        :: List a -> a @-}
+headt (x ::: _)  = x
+
+{-@ tail        :: List a -> List a @-}
+tailt (_ ::: xs) = xs
+\end{code}
+
+<br> <br>
+
+Partial Functions are _automatically_ detected when `totality` check is on!
+
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 
 <div class="slideonly">
 
@@ -320,12 +358,24 @@ avg xs     = safeDiv total n
 <br> 
 **Q:** Write type for `avg` that verifies safe division.
 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 Safe List Indexing
 ---------------------------------
 \begin{code}
-take :: Int -> List a -> List a 
 {-@ take :: i:Int -> xs:List a -> List a @-} 
+take 0 Emp        = Emp 
 take i (x ::: xs) = if i == 0 then Emp else x ::: (take (i-1) xs)
 take i Emp        = impossible "Out of bounds indexing!" 
 \end{code}
@@ -344,17 +394,16 @@ take i Emp        = impossible "Out of bounds indexing!"
 <br>
 <br>
 
-Totality Checking 
 
-Example 
--------
-
-HeartBleed
-----------
+Catch the The Heartbleed Bug!
+-----------------------------
 
 \begin{code}
-{-@ assume T.takeWord16 :: i:{Int | 0 <= i } -> {v:Data.Text.Internal.Text | i <= slen v} -> Data.Text.Internal.Text
-@-}
+{-@ measure tlen        :: T.Text -> Int                               @-}
+
+{-@ assume T.pack       :: i:String -> {o:T.Text | len i == tlen o }   @-}
+{-@ assume T.takeWord16 :: i:Nat -> {v:T.Text | i <= tlen v} -> T.Text @-}
+
 safeTake   = T.takeWord16 2  (T.pack "Niki")
 unsafeTake = T.takeWord16 10 (T.pack "Niki")
 \end{code}
@@ -387,9 +436,22 @@ Recap
 3. <div class="fragment">**Measures:** Specify Properties of Data</div>
 
 <br>
+**Question:** What properties can be expressed in the logic? 
+<br> 
+**Answer:** 
+
+ - Linear Arithmetic, Booleans, ... (SMT logic)
+ 
+ - Terminating reflected Haskell functions
+
+<br>
 
 <div class="fragment">
-**Next:** [Abstract Refinements](04-abstract-refinements.html)
+
+**Next:** [Termination](04-termination.html)
+
+**Next:** [Refinement Reflection](05-refinement-reflection.html)
+
 </div>
 
 
