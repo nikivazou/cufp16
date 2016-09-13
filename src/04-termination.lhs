@@ -9,11 +9,14 @@
 
 module Termination where
 
-import Prelude hiding (map)
+import Prelude hiding (map, repeat)
 
 fib :: Int -> Int
 map :: (a -> b) -> [a] -> [b]
 
+isOdd, isEven :: Int -> Bool 
+ack :: Int -> Int -> Int 
+range :: Int -> Int -> [Int]
 
 \end{code}
 
@@ -234,43 +237,11 @@ How about data types?
 Map ADTs to integers using measures!
 
 \begin{code}
-{-@ map :: (a -> b) -> [a] -> [b] / [len xs] @-}
+{-@ map :: (a -> b) -> xs:[a] -> [b] / [len xs]  @-}
 map _ []     = []
 map f (x:xs) = f x : map f xs 
 \end{code}
-<br>
-<br>
 
-But Liquid Haskell knows that!
-
-<br>
-It will use `len` as the default metric to check `x:[a]` decreasing.
-
-<br>
-<br>
-<br> 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-How about data types?
------------------------------------
-
-Map ADTs to integers using measures!
-
-\begin{code}
-{-@ map :: (a -> b) -> [a] -> [b] / [len xs] @-}
-map _ []     = []
-map f (x:xs) = f x : map f xs 
-\end{code}
 <br>
 <br>
 
@@ -300,8 +271,8 @@ Mutual Recursive Functions
 Same idea generalizes to mutual recusion. 
 
 \begin{code}
-{-@ isEven :: n:Nat -> Bool / [n] @-}
-{-@ isOdd  :: m:Nat -> Bool / [m] @-}
+{-@ isEven :: n:Nat -> Bool / [n, 0] @-}
+{-@ isOdd  :: m:Nat -> Bool / [m, 1] @-}
 
 isEven 0 = True
 isEven n = isOdd (n-1)
