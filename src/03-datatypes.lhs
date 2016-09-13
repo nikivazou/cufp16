@@ -26,11 +26,10 @@ take       :: Int -> List a -> List a
 
 
 sum :: List Int -> Int 
-sum Emp = 0 
-sum (x ::: xs) = x + sum xs
-infixr 9 :::
+sum N = 0 
+sum (C x xs) = x + sum xs
 
-{-@ data List [length] a = Emp | (:::) {hd :: a, tl :: List a } @-}
+{-@ data List [length] a = N | C {hd :: a, tl :: List a } @-}
 {-@ invariant {v: List a | 0 <= length v} @-}
 
 {-@ type Nat      = {v:Int | v >= 0} @-}
@@ -90,8 +89,8 @@ Lets define our own `List` data type:
 <br>
 
 \begin{code}
-data List a = Emp               -- Nil
-            | (:::) a (List a)  -- Cons
+data List a = N             -- Nil
+            | C a (List a)  -- Cons
 \end{code}
 </div>
 
@@ -126,8 +125,8 @@ Haskell function with *a single equation per constructor*
 \begin{code}
 {-@ measure length @-}
 length :: List a -> Int
-length Emp        = 0
-length (_ ::: xs) = 1 + length xs
+length N        = 0
+length (C _ xs) = 1 + length xs
 \end{code}
 
 <br>
@@ -162,10 +161,10 @@ Specifying the Length of a List
 \begin{spec} <div/>
 data List a where
 
-  Emp   :: {v:List a | length v = 0}
+  N :: {v:List a | length v = 0}
 
-  (:::) :: x:a -> xs:List a
-        -> {v:List a | length v = 1 + length xs}
+  C :: x:a -> xs:List a
+    -> {v:List a | length v = 1 + length xs}
 \end{spec}
 
 </div>
@@ -216,13 +215,13 @@ Fear `head` and `tail` no more!
 
 <div class="fragment">
 \begin{code}
-{-@ head        :: List a -> a @-}
-head (x ::: _)  = x
-head _          = impossible "head"
+{-@ head     :: List a -> a @-}
+head (C x _) = x
+head _       = impossible "head"
 
-{-@ tail        :: List a -> List a @-}
-tail (_ ::: xs) = xs
-tail _          = impossible "tail"
+{-@ tail      :: List a -> List a @-}
+tail (C _ xs) = xs
+tail _        = impossible "tail"
 \end{code}
 
 <br> <br>
@@ -281,51 +280,16 @@ Totality Checking in Liquid Haskell
 \begin{code}
 {-@ LIQUID "--totality" @-}
 
-{-@ headt        :: List a -> a @-}
-headt (x ::: _)  = x
+{-@ headt      :: List a -> a @-}
+headt (C x _)  = x
 
-{-@ tail        :: List a -> List a @-}
-tailt (_ ::: xs) = xs
+{-@ tailt      :: ListNE a -> List a @-}
+tailt (C _ xs) = xs
 \end{code}
 
 <br> <br>
 
 Partial Functions are _automatically_ detected when `totality` check is on!
-
-</div>
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-<div class="slideonly">
-
-`head` and `tail` are Safe
---------------------------
-
-When called with *non-empty* lists:
-
-<br>
-
-\begin{spec}
-{-@ head :: ListNE a -> a @-}
-head (x ::: _)  = x
-head _          = impossible "head"
-
-{-@ tail :: ListNE a -> List a @-}
-tail (_ ::: xs) = xs
-tail _          = impossible "tail"
-\end{spec}
 
 </div>
 
@@ -371,13 +335,17 @@ avg xs     = safeDiv total n
 <br>
 <br>
 
-Safe List Indexing
+In bounds `take`
 ---------------------------------
+
+Use measures to specify `take`
+<br>
+
 \begin{code}
 {-@ take :: i:Int -> xs:List a -> List a @-} 
-take 0 Emp        = Emp 
-take i (x ::: xs) = if i == 0 then Emp else x ::: (take (i-1) xs)
-take i Emp        = impossible "Out of bounds indexing!" 
+take 0 N        = N 
+take i (C x xs) = if i == 0 then N else x `C` (take (i-1) xs)
+take i N        = impossible "Out of bounds indexing!" 
 \end{code}
 
 
@@ -398,12 +366,23 @@ take i Emp        = impossible "Out of bounds indexing!"
 Catch the The Heartbleed Bug!
 -----------------------------
 
+Assuming the library `Text` types...
+
+<br>
+
 \begin{code}
 {-@ measure tlen        :: T.Text -> Int                               @-}
 
 {-@ assume T.pack       :: i:String -> {o:T.Text | len i == tlen o }   @-}
 {-@ assume T.takeWord16 :: i:Nat -> {v:T.Text | i <= tlen v} -> T.Text @-}
+\end{code}
 
+
+<br>
+... HeartBleed **cannot** happen!
+<br>
+
+\begin{code}
 safeTake   = T.takeWord16 2  (T.pack "Niki")
 unsafeTake = T.takeWord16 10 (T.pack "Niki")
 \end{code}
@@ -436,13 +415,12 @@ Recap
 3. <div class="fragment">**Measures:** Specify Properties of Data</div>
 
 <br>
-**Question:** What properties can be expressed in the logic? 
+What properties can be expressed in the logic? 
 <br> 
-**Answer:** 
 
- - Linear Arithmetic, Booleans, ... (SMT logic)
+ - Linear Arithmetic, Booleans, Uninterpreted Functions, ... (SMT logic)
  
- - Terminating reflected Haskell functions
+ - Terminating Reflected Haskell functions.
 
 <br>
 

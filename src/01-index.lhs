@@ -50,19 +50,57 @@ main = putStrLn "Easter Egg: to force Makefile"
 <br>
 <br>
 <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 
 
 The Heartbleed Bug.
 ------------------
+[Heartbleed](https://en.wikipedia.org/wiki/Heartbleed) is a security bug in the OpenSSL cryptography library (April 2014).
+<p align="center">
+<img src="http://heartbleed.com/heartbleed.png" alt="The HEartbleed Bug." style="width: 300px;" align="middle" />
+</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
+
+
+The Heartbleed Bug in Haskell
+------------------------------
 
 <div class="fragment">
 \begin{spec}
 λ> :m +Data.Text Data.Text.Unsafe
 λ> let text = pack "Niki"
 λ> :t takeWord16
-    takeWord16 :: Text -> Int -> Text
+    takeWord16 :: Int -> Text -> Text
 \end{spec}
 </div>
 
@@ -71,7 +109,24 @@ The Heartbleed Bug.
 <br>
 <br>
 <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
+`True` is a bad argument 
+-------------------------
 
 <div class="fragment">
 \begin{spec}
@@ -90,6 +145,11 @@ The Heartbleed Bug.
 <br>
 <br>
 
+But, `10` is a good argument 
+-------------------------
+
+Reveal `6` extra characters...
+<br>
 <div class="fragment">
 \begin{spec}
 λ>  takeWord16 10 text
@@ -116,6 +176,9 @@ Partial Functions
 
 <div class="fragment">
 \begin{spec}
+λ> :t head
+head :: [a] -> a
+
 λ> head "Facebook"
 'F'
 \end{spec}
@@ -145,7 +208,7 @@ Partial Functions
 
 
 
-Fuctional Correctness
+Functional Correctness
 ---------------------
 
 <div class="fragment">
@@ -158,8 +221,8 @@ False
 
 <div class="fragment">
 \begin{spec}
-λ> mapReduce (+) (map fib) [1..20]
-[5, 3]
+λ> mapReduce 42 sum (+) [1..20]
+0 
 \end{spec}
 </div>
 
@@ -216,8 +279,9 @@ Plan
 
 1. [**Refinements Types**](02-refinements.html)
 2. [**Data Types**](03-datatypes.html)
-3. [**Abstract Refinements**](04-abstract-refinements.html)
-4. [**Bounded Refinements**](05-bounded-refinements.html)
+3. [**Termination**](04-termination.html)
+4. [**Reflection**](05-refinement-reflection.html)
+5. [**Case Study: MapReduce**](06-mapReduce.html)
 
 
 <br>

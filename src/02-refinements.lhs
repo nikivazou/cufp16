@@ -54,7 +54,7 @@ Simple Refinement Types
 <br>
 
 Simple Refinement Types
-------------------
+------------------------
 
 <br>
 
@@ -649,7 +649,7 @@ How to describe  **non empty lists**?
 <br>
 
 \begin{spec}
-{-@ length    :: {v:[a]| length v > 0 } -> Pos @-}
+{-@ avg :: {v:[a]| 0 < length v } -> Pos @-}
 \end{spec}
 
 <br>

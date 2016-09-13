@@ -112,15 +112,15 @@ fib i | i == 0    = 0
 
 Proving Termination I
 ----------------------
-
-Liquid Haskell checks a _well founded_ metric decreses at each recursive call. 
+<br>
+Liquid Haskell checks a _well founded_ metric decreases at each recursive call. 
 
 
 <br>
 <br>
-_Well founded_ metric:
+_Well founded_ metrics:
 
- - the first integer argument
+ - the first integer argument.
 <br>
 <br>
 <br> 
@@ -172,15 +172,15 @@ range lo hi
 Proving Termination 
 ----------------------
 
-Liquid Haskell checks a _well founded_ metric decreses at each recursive call. 
+Liquid Haskell checks a _well founded_ metric decreases at each recursive call. 
 
 
 <br>
 <br>
-_Well founded_ metric:
+_Well founded_ metrics:
 
- - user specified metrics
- - the first integer argument
+ - user specified metrics, or
+ - the first integer argument.
 <br>
 <br>
 <br> 
@@ -197,10 +197,10 @@ _Well founded_ metric:
 <br>
 
 
-Lexicograohic Termination
+Lexicographic Termination
 -----------------------------------
 
-Why does Ackermann Function terminate?
+Why does [Ackermann Function](https://en.wikipedia.org/wiki/Ackermann_function) terminate?
 
 
 \begin{code}
@@ -265,14 +265,53 @@ It will use `len` as the default metric to check `x:[a]` decreasing.
 <br>
 <br>
 
+User specified metrics on ADTs
+-----------------------------------
+
+<br>
+
+\begin{code}
+{-@ merge :: xs:[a] -> ys:[a] -> [a] / [0] @-}
+merge xs []   = xs
+merge [] ys   = ys
+merge (x:xs) (y:ys) 
+  | x < y     = x:(merge xs (y:ys))
+  | otherwise = y:(merge ys (x:xs))
+\end{code}
+
+<br>
+<br>
+
+Does `merge` terminate?
+
+<br>
+
+Liquid Haskell cannot know that!
+
+<br>
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
 Mutual Recursive Functions
 -----------------------------------
 
-Same idea generalizes to mutual recusion. 
+Same idea generalizes to mutual recursion. 
 
 \begin{code}
 {-@ isEven :: n:Nat -> Bool / [n, 0] @-}
-{-@ isOdd  :: m:Nat -> Bool / [m, 1] @-}
+{-@ isOdd  :: m:Nat -> Bool / [m, 0] @-}
 
 isEven 0 = True
 isEven n = isOdd (n-1)
@@ -282,7 +321,11 @@ isOdd m = not $ isEven m
 <br>
 <br>
 
-Liquid Haskell does not attempt a guess...
+Can you find the correct metric?
+
+<br>
+
+Liquid Haskell does not even attempt to guess it...
 
 <br>
 <br>
@@ -302,9 +345,10 @@ Liquid Haskell does not attempt a guess...
 Diverging Functions 
 -----------------------------------
 
+<br>
+`Lazy` annotation deactivates termination checking.
 
-`Lazy` annotation deactivates termination checking
-
+<br>
 \begin{code}
 {-@ Lazy repeat @-}
 
@@ -336,15 +380,15 @@ Proving Termination
 
 For non `Lazy` specified functions,
 
-Liquid Haskell checks a _well founded_ metric decreses at each recursive call. 
+Liquid Haskell checks a _well founded_ metric decreases at each recursive call. 
 
 
 <br>
 <br>
-_Well founded_ metric:
+_Well founded_ metrics:
 
- - user specified _lexocographic_ metrics
- - the first integer or "sized" argument
+ - user specified _lexocographic_ metrics,
+ - the first integer or "sized" argument.
 <br>
 <br>
 <br> 
@@ -370,13 +414,13 @@ Recap
 1. **Refinements:** Types + Predicates
 2. **Subtyping:** SMT Implication
 3. **Measures:** Specify Properties of Data
-4. <div class="fragment">**Termination Checking</div>
+4. <div class="fragment">**Termination:**</div> Use Logic to Prove Termination 
 
 
 <br>
 
 <div class="fragment">
-**Next:** [Refinement Reflection](05-refinement-reflection.html) : Put terminating functions in the logic!
+**Next:** [Refinement Reflection](05-refinement-reflection.html) : Allow terminating functions in the logic!
 </div>
 
 <br>
