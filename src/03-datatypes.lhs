@@ -403,6 +403,33 @@ unsafeTake = T.takeWord16 10 (T.pack "Niki")
 <br>
 <br>
 
+Safe Indexing at awake!
+-----------------------------
+
+<br>
+
+Specify good indexing types at [Data/ByteString/Extras](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/master/src/Data/ByteString/Extras.hs#L471) ...
+
+<br>
+<br>
+<br>
+... Liquid Haskell proves them SAFE at [users](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/master/src/Awake/Protocol/TFTP.hs#L105)!
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 Recap
 -----

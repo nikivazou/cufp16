@@ -155,7 +155,31 @@ Annotations are 2.34&#37; of the code!
 \end{spec}
 
 +Termination = annotated functions (loc for annotations) - lazy functions 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
+Annotations in Numbers per file
+----------------------------------
 
 \begin{spec}
                                    LOC   LLOC Termination+ Assumes Pragma

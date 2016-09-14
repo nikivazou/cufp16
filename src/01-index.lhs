@@ -3,7 +3,7 @@
 <br>
 <br>
 
-<h1 style="border-bottom:none">LiquidHaskell: Liquid Types for Haskell</b>
+<h1 style="text-align:center">LiquidHaskell @ Awake Networks</b>
 
 <h4 style="text-align:center"><i>Niki Vazou   </i></h4>
 <h5 style="text-align:center"><i>(UC San Diego)</i></h5>
