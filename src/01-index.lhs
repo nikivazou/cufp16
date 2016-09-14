@@ -25,6 +25,44 @@
 <br>
 <br>
 
+LiquidHaskell at Awake Networks
+===============================
+<br>
+
+- Verification of [packet-analysis](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis)
+    - all functions are terminating & total 
+    - [safe](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/master/src/Data/ByteString/Extras.hs) ByteString indexing
+
+- Verification of Jeff's [parallel string matcher](https://github.com/ucsd-progsys/liquidhaskell/blob/develop/tests/strings/pos/StringIndexing.hs#L41)
+ 
+<br>
+<br>
+
+**Motivation:** _Why_ verification?
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
 
 Well-Typed Programs *Can* Go Wrong
 ==================================
@@ -179,8 +217,8 @@ Partial Functions
 λ> :t head
 head :: [a] -> a
 
-λ> head "Facebook"
-'F'
+λ> head "Awake"
+'A'
 \end{spec}
 </div>
 
@@ -282,6 +320,7 @@ Plan
 3. [**Termination**](04-termination.html)
 4. [**Reflection**](05-refinement-reflection.html)
 5. [**Case Study: MapReduce**](06-mapReduce.html)
+6. [**Awake Experience**](07-awake.html)
 
 
 <br>
