@@ -1,13 +1,11 @@
 
-LiquidHaskell at Awake Networks
+LiquidHaskell @ Awake Networks
 ===============================
 <br>
 
-- Verification of [packet-analysis](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis)
+- Verification of 74 modules string processing code base 
     - all functions are terminating & total 
-    - [safe](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/master/src/Data/ByteString/Extras.hs) ByteString indexing
-
-- Verification of Jeff's [parallel string matcher](https://github.com/ucsd-progsys/liquidhaskell/blob/develop/tests/strings/pos/StringIndexing.hs#L41)
+    - safe ByteString indexing
 
 <br>
 <br>
@@ -33,11 +31,29 @@ LiquidHaskell at Awake Networks
 <br>
 
 
-Verification  of Packet Analysis
+Who runs Liquid Haskell?
 --------------------------------
 <div class="hidden">
 
 \begin{code}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
+
+
+import Prelude hiding (take)
+
+
+import           Data.Word
+import qualified Data.ByteString      as B
+import qualified Data.ByteString.Lazy as BL
+import           Data.Bits
+import           Data.Proxy
+
 main = putStrLn "Easter Egg: to force Makefile"
 \end{code}
 
@@ -45,14 +61,13 @@ main = putStrLn "Easter Egg: to force Makefile"
 
 <br>
 
-`Jenkis` (used to) [run](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/master/jenkins.hs#L138) `liquid` on all but 4 files 
-
-Files known to fails 
-
-  - `Data.Struct.[Checked/Unchecked]`: John's dependent types magic
-  - `Awake/Data/[Chunks/Buffer]`: Deep list invariants (known but time consuming)
+Run `liquid-check-all` script automatically at pull requests. 
 
 <br>
+
+*Challenge* Running time for all code is `~80 min`.
+
+
 <br>
 <br>
 <br>
@@ -74,6 +89,8 @@ Files known to fails
 <br>
 <br>
 <br>
+<br>
+
 
 Experience
 --------------------------------
@@ -81,7 +98,7 @@ Experience
 
 - Verification is generally easy, apart from 
 
-      - Some code rewriting (e.g., [monadic to maybe code](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/pull/317/files#diff-27908f4a5fd211b5356de3a4ad0a7442R124) )
+      - Some code rewriting (e.g., monadic to maybe code)
 
       - Some known issues (e.g., use [filter's precise type](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/671d4f858b7f5f77e6017d357b9da73151037948/src/Awake/Parser/Multiplier.hs#L170))
 
@@ -111,6 +128,148 @@ Experience
 <br>
 <br>
 <br>
+
+
+
+Code Rewritting: Monad to Maybe 
+--------------------------------
+
+
+\begin{code}
+{-@ monadicStyle :: Nat -> [a] -> Maybe [a] @-}
+monadicStyle i xs =
+  do checkSizeMaybe i head xs
+     return (take i xs)
+\end{code}
+
+
+\begin{code}
+{-@ maybeStyle :: Pos -> [a] -> Maybe [a] @-}
+maybeStyle i xs =
+  case checkSizeMaybe i head xs of 
+    Just _  -> Just $ take i xs 
+    Nothing -> Nothing 
+\end{code}
+
+
+\begin{code}
+{-@ type Pos = {v:Int | 0 < v } @-}
+
+{-@
+checkSizeMaybe :: 
+       n:Nat
+    -> (bs:{[a] | n <= len bs } -> b)
+    -> bs:[a]
+    -> {v:Maybe b | isJust v => n <= len bs}
+@-}
+\end{code}
+
+\begin{code}
+checkSizeMaybe :: Int -> ([a] -> b) -> [a] -> Maybe b
+checkSizeMaybe sz f bs
+  | length bs >= sz = Just (f bs)
+  | otherwise       = Nothing
+
+{-@ take :: i:Nat -> xs:{[a] | i <= len xs} -> [a] @-} 
+take :: Int -> [a] -> [a]
+take 0 []        = [] 
+take i (x:xs) = if i == 0 then [] else x:(take (i-1) xs)
+\end{code}
+
+
+
+
+Code Rerwitting: Filter & ADTS
+------------------------------
+
+Liquid Haskell in good is linear arithmetic ...
+
+\begin{code}
+{-@ filterPosSnd :: [(a, Int)] -> [(a, Pos)] @-}
+filterPosSnd :: [(a, Int)] -> [(a, Int)]
+filterPosSnd = filter ((>0) . snd)
+\end{code}
+
+\begin{code}
+{-@ assume filter :: forall <p :: a -> Prop, w :: a -> Bool -> Prop>.
+                 {y::a, b::{b:Bool<w y> | Prop b} |- {v:a | v == y} <: a<p>} 
+                 (x:a -> Bool<w x>) -> [a] -> [a<p>]
+  @-}
+\end{code}
+
+\begin{code}
+{-@ filterPosSndAxiom :: [(a, Int)] -> [(a, Pos)] @-}
+filterPosSndAxiom :: [(a, Int)] -> [(a, Int)]
+filterPosSndAxiom = axiomPosPair . filter ((>0) . snd)
+
+
+{-@ assume snd :: p:(a, b) -> {v:b | v == snd p} @-}
+
+{-@ axiomPosPair :: [{x:(a, Int) | 0 < (snd x)}] -> [(a, Pos)] @-}
+axiomPosPair :: [(a, Int)] -> [(a, Int)]
+axiomPosPair [] = []
+axiomPosPair ((x1, x2):xs) = (x1, x2):axiomPosPair xs 
+\end{code}
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+Extend fix Liquid Haskell: Sucess
+--------------------------------------
+
+Verification required extending Liquid Haskell to support
+
+- `TypeLits`, 
+- (Refining `newtype`)[https://github.com/ucsd-progsys/liquidhaskell/pull/798], and 
+- (DataKinds)[https://github.com/ucsd-progsys/liquidhaskell/pull/796].
+
+
+Verification required fixing bugs in Liquid Haskell
+- (Code explosion)[https://github.com/ucsd-progsys/liquidhaskell/issues/792], 
+- (Unsoundness)[https://github.com/ucsd-progsys/liquidhaskell/issues/743], and
+- (Parsing)[https://github.com/ucsd-progsys/liquidhaskell/issues/813].
+
+
+
+
+Extend/fix Liquid Haskell: Failure
+--------------------------------------
+
+
+
+
+Code 
+
+
+`Jenkis` (used to) [run](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/master/jenkins.hs#L138) `liquid` on all but 4 files 
+
+Files known to fails 
+
+  - `Data.Struct.[Checked/Unchecked]`: John's dependent types magic
+  - `Awake/Data/[Chunks/Buffer]`: Deep list invariants (known but time consuming)
+
+
+Chunk Invariant :: All elements of the list have _the same size!_
+
 
 Bug examples
 ----------------------
@@ -147,6 +306,11 @@ Annotations in Numbers
 <br>
 Annotations are 2.34&#37; of the code!
 <br>
+Time = 77 minutes :(
+<br>
+
+
+     --      4644.69 real      4634.93 user       301.72 sys
 
 \begin{spec}
            LOC   Annotations  Termination+  Assumes 
@@ -321,6 +485,91 @@ LiquidHaskell at Awake Networks
 <br>
 <br>
 
+
+
+Dependent Types Example
+-------------------------
+
+
+
+\begin{code}
+class Member a where
+  sizeOfMember :: Proxy a -> Int 
+  readMember   :: ReadPtr a -> a 
+
+type ReadPtrN t = ReadPtr (t 'Nothing)
+
+newtype ReadPtr a = ReadPtr B.ByteString
+
+instance Member Word32 where
+  sizeOfMember _ = 4
+  readMember (ReadPtr bs) = getWord32 bs
+
+
+{-@
+getWord32
+    :: { bs : B.ByteString | 4 <= bslen bs }
+    -> Word32
+@-}
+getWord32 :: B.ByteString -> Word32
+getWord32 bs = b3 .|. b2 .|. b1 .|. b0 where
+    b3 = fromIntegral (B.head bs) `shiftL` 24
+    b2 = fromIntegral (B.head $ B.drop 1 bs) `shiftL` 16
+    b1 = fromIntegral (B.head $ B.drop 2 bs) `shiftL` 8
+    b0 = fromIntegral (B.head $ B.drop 3 bs)
+
+\end{code}
+
+
+
+Parser Invariants
+-----------------
+
+
+
+
+
+let n = max 0 n' in inp {llen = llen inp - n, bs = drop n (bs inp)}
+with {llen = len bs}
+
+
+
+
+Termination bug
+----------------
+
+
+Flush consecutive 
+
+consecutive :: Buffer a -> ([a], Buffer a)
+consecutive (Buffer k m) = 
+    case IntMap.lookup (fromIntegral k) m of
+        Nothing -> (  [], Buffer k                   m )
+        Just v  -> (v:vs, Buffer k' (IntMap.delete (fromIntegral k) m'))
+
+
+{-| Flush as many consecutive elements as possible from the `Buffer`, starting
+    at the expected `next` key
+
+>>> consecutive (Buffer 0 (IntMap.fromList [(0, 'A'), (1, 'B'), (3, 'C')]))
+("AB",Buffer {_next = 2, elems = fromList [(3,'C')]})
+>>> consecutive (Buffer 0 IntMap.empty)
+([],Buffer {_next = 0, elems = fromList []})
+
+-}
+
+consecutive :: Buffer a -> ([a], Buffer a)
+consecutive (Buffer k0 m0) = go (fromIntegral (maxBound :: Word16)) k0 m0 
+  where 
+    go :: Int -> Word16 -> IntMap a -> ([a], Buffer a)
+    go i k m
+      | i == 0 = ([], Buffer k m)
+    go i k m 
+      = case IntMap.lookup (fromIntegral k) m of
+             Nothing -> (  [], Buffer k                   m )
+             Just v  -> (v:vs, Buffer k' (IntMap.delete (fromIntegral k) m'))
+          where
+            ~(vs, ~(Buffer k' m')) = go (i-1) (k + 1) m 
 
 
 

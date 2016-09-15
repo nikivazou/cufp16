@@ -243,11 +243,11 @@ map f (x:xs) = f x : map f xs
 \end{code}
 
 <br>
-<br>
 
 But Liquid Haskell knows that!
 
 <br>
+
 It will use `len` as the default metric to check `x:[a]` decreasing.
 
 <br>
@@ -280,14 +280,12 @@ merge (x:xs) (y:ys)
 \end{code}
 
 <br>
-<br>
 
 Does `merge` terminate?
 
 <br>
 
 Liquid Haskell cannot know that!
-
 <br>
 <br>
 <br> 
@@ -323,9 +321,58 @@ isOdd m = not $ isEven m
 
 Can you find the correct metric?
 
+Replace `0` with `1` in `isOdd`'s signature.
+
+Then, `isOdd` can call `isEven` on the same input.
+
+<br>
+<br>
+<br> 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 <br>
 
-Liquid Haskell does not even attempt to guess it...
+
+Mutual Recursion @ Awake
+-------------------------------------
+<br>
+A chellenging example
+<br>
+\begin{code}
+
+{-@ nextA :: as:[a] -> bs:[b] -> m () 
+          /  [len bs, len as, if len as == 0 then 1 else 0 ] @-}
+nextA (a:as) bs = actA a  >> nextB as bs 
+nextA [] []     = return ()
+nextA [] bs     = nextB [] bs
+
+{-@ nextB :: as:[a] -> bs:[b] -> m ()
+          /  [len bs, len as, if len bs == 0 then 1 else 0 ] @-}
+nextB as (b:bs) = actB b >> nextB as bs
+nextB [] []     = return ()
+nextB as []     = nextA as []
+
+\end{code}
+
+
+<div class="hidden">
+\begin{code}
+nextA :: Monad m => [a] -> [b] -> m ()
+nextB :: Monad m => [a] -> [b] -> m ()
+
+actA, actB :: Monad m => a -> m ()
+actA = undefined 
+actB = undefined
+\end{code}
+</div>
 
 <br>
 <br>
@@ -420,7 +467,7 @@ Recap
 <br>
 
 <div class="fragment">
-**Next:** [Refinement Reflection](05-refinement-reflection.html) : Allow terminating functions in the logic!
+**Next:** [Awake Networks:](07-awake.html) : Liquid Haskell on real production code! 
 </div>
 
 <br>
