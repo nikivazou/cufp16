@@ -312,9 +312,8 @@ Plan
 2. [**Data Types**](03-datatypes.html)
 3. [**Termination**](04-termination.html)
 4. [**Reflection**](05-refinement-reflection.html)
-5. [**Case Study: MapReduce**](06-mapReduce.html)
-6. [**Awake Experience**](07-awake.html)
-
+5. [**Structural Induction:**](06-structural-induction.html) 
+6. [**Case Study: MapReduce**](07-mapReduce.html)
 
 <br>
 <br>

@@ -698,13 +698,13 @@ Recap
 2. **Subtyping:** SMT Implication
 3. **Measures:** Specify Properties of Data
 4. **Termination:** Use Logic to Prove Termination
-5. <div class="fragment">**Reflection:**</div> Allow Haskell functions in Logic! 
-
+5. **Reflection:** Allow Haskell functions in Logic.
+6. <div class="fragment">**Structural Induction:**</div> Proving Theorems on Lists! 
 
 <br>
 
 <div class="fragment">
-**Next:** [Structural Induction](06-structural-induction.html): Proving Theorems on Lists!
+**Next:** [Case Study: MapReduce](07-mapReduce.html): Program Properties that matter!
 </div>
 <br>
 <br>

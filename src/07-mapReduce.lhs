@@ -471,7 +471,8 @@ Recap
 3. **Measures:** Specify Properties of Data
 4. **Termination:** Use Logic to Prove Termination
 5. **Refinement Reflection:** Allow Haskell functions in Logic
-6. <div class="fragment">**Case Study:**</div> Prove Program Equivalence 
+6. **Structural Induction:** Proving Theorems on Lists!
+7. <div class="fragment">**Case Study:**</div> Prove Program Equivalence 
 
 <br>
 <br>
