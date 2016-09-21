@@ -4,7 +4,7 @@
 {-# LANGUAGE TupleSections    #-}
 {-@ LIQUID "--no-warnings"    @-}
 {-@ LIQUID "--short-names"    @-}
-{- LIQUID "--diff"           @-}
+{-@ LIQUID "--diff"           @-}
 
 
 -- Hidden code 
