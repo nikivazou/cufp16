@@ -3,11 +3,11 @@
 <br>
 <br>
 
-<h1 style="text-align:center">LiquidHaskell @ Awake Networks</b>
+<h1 style="text-align:center">LiquidHaskell: </b>
+<h1 style="text-align:center">Verification of Haskell Code with SMTs</b>
 
 <h4 style="text-align:center"><i>Niki Vazou   </i></h4>
 <h5 style="text-align:center"><i>(UC San Diego)</i></h5>
-<h5 style="text-align:center"><i>(Awake Networks)</i></h5>
 
 <br>
 <br>
@@ -25,16 +25,9 @@
 <br>
 <br>
 
-LiquidHaskell at Awake Networks
-===============================
+LiquidHaskell: Verification of Haskell with SMTs
+=======================================================
 <br>
-
-- Verification of [packet-analysis](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis)
-    - all functions are terminating & total 
-    - [safe](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/master/src/Data/ByteString/Extras.hs) ByteString indexing
-
-- Verification of Jeff's [parallel string matcher](https://github.com/ucsd-progsys/liquidhaskell/blob/develop/tests/strings/pos/StringIndexing.hs#L41)
- 
 <br>
 <br>
 
