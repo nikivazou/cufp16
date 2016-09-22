@@ -80,9 +80,9 @@ data L a = N | C a (L a)
 \end{code}
 
 <br>
-
 with its anchored size function. 
 <br>
+
 \begin{code}
 {-@ measure length @-}
 {-@ length :: L a -> Nat @-}
@@ -130,7 +130,7 @@ select_C_1 :: L a -> a
 select_C_2 :: L a -> L a 
 \end{spec}
 <br>
-**Q:** Suggest alternative names for the above selectors.
+**Q:** Do these function types look familiar?
 <br>
 <br>
 <br>
@@ -164,11 +164,11 @@ The body of `map` reflects in its result type
 <br>
 \begin{spec}
 map :: f:(a->b) -> xs:L a 
-  -> {v = map f xs && v == mapPred f xs}
-
-mapPred f xs = if isN xs then N else
-               C (f (select_C_1 xs)
-                 (map f (select_C_2))  
+    -> {v:L a | v == map f xs 
+             && v == if isN xs then N else
+                     C (f (select_C_1 xs)
+                       (map f (select_C_2 xs))  
+       }
 \end{spec}
 
 <br>
@@ -210,7 +210,7 @@ Get automatically the "singleton" Liquid Types:
 id :: x:a -> {v:a | v == id x && v == x}
 
 compose :: f:(b -> c) -> g:(a -> b) -> x:a 
-        -> {v:c | v = compose f g x && v == f (g x)}
+        -> {v:c | v == compose f g x && v == f (g x)}
 \end{spec}
 
 <br>
@@ -238,38 +238,6 @@ Lets prove the identity functor law!
 
 \begin{code}
 {-@ mapId :: xs:L a -> { map id xs == id xs } @-}
-mapId xs = trivial 
-\end{code}
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-Hints 
-
-  - Case splitting, and 
-  - Recursive call!
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Functor Laws: Identity, Solution
----------------------------------------------
-<br>
-Here is the proof:
-<br>
-
-\begin{spec}
 mapId N 
   =   map id N 
   ==. N 
@@ -279,13 +247,19 @@ mapId (C x xs)
   =   map id (C x xs)
   ==. id x `C` map id xs 
   ==. x `C` map id xs 
-  ==. x `C` id xs         ∵ mapId xs
+  ==. x `C` id xs         ? mapId xs
   ==. x `C` xs 
   ==. id (x `C` xs)
   *** QED    
-\end{spec}
+\end{code}
 
 <br>
+
+Proof: 
+
+  - Case splitting, and 
+  - recursive call!
+
 <br>
 <br>
 <br>
@@ -327,7 +301,7 @@ mapFusion f g xs = trivial
 Hints (surprise!)
 
   - Case splitting, and 
-  - Recursive call!
+  - recursive call!
 
 <br>
 <br>
@@ -357,7 +331,8 @@ mapFusion f g (C x xs)
    =   map (compose f g) (C x xs)
    ==. (compose f g) x `C` map (compose f g) xs
    ==. compose f g x   `C` map (compose f g) xs
-   ==. f (g x) `C` (compose (map f) (map g)) xs  ∵ mapFusion f g xs 
+   ==. f (g x) `C` (compose (map f) (map g)) xs  
+      ? mapFusion f g xs 
    ==. f (g x) `C` compose (map f) (map g) xs  
    ==. f (g x) `C` (map f) ((map g) xs)
    ==. f (g x) `C` map f (map g xs)
@@ -441,6 +416,7 @@ emptyLeft x = trivial
 <br>
 
 Hints: 
+
   - Rewrite! 
 
 <br>
@@ -529,7 +505,7 @@ emptyRight N
 emptyRight (C x xs)
   =   append (C x xs) empty
   ==. x `C` append  xs empty
-  ==. x `C` xs                ∵ emptyRight xs 
+  ==. x `C` xs                ? emptyRight xs 
   *** QED 
 \end{spec}
 <br>
@@ -558,7 +534,20 @@ Lets prove the associativity monoid law!
 \begin{code}
 {-@ appendAssoc :: xs:L a -> ys:L a -> zs:L a 
   -> {append xs (append ys zs) == append (append xs ys) zs } @-}
-appendAssoc xs ys zs = trivial 
+appendAssoc N ys zs 
+  =   append N (append ys zs)
+  ==. append ys zs                   
+  ==. append (append N ys) zs        
+  *** QED 
+
+appendAssoc (C x xs) ys zs
+  =   append (C x xs) (append ys zs)
+  ==. x `C` append xs (append ys zs) 
+  ==. x `C` append (append xs ys) zs 
+      ? appendAssoc xs ys zs
+  ==. append (x `C` append xs ys) zs
+  ==. append (append (C x xs) ys) zs
+  *** QED 
 \end{code}
 
 <br>
@@ -570,9 +559,8 @@ appendAssoc xs ys zs = trivial
 <br>
 Hints
 
-  - Case splitting,  
-  - recursive call, AND
-  - `emptyLeft` on `ys` and `append ys zs`
+  - Case splitting, and 
+  - recursive call.
 
 <br>
 <br>
@@ -592,14 +580,17 @@ Here is the proof:
 \begin{spec}
 appendAssoc N ys zs 
   =   append N (append ys zs)
-  ==. append ys zs                   ∵ emptyLeft (append ys zs)
-  ==. append (append N ys) zs        ∵ emptyLeft ys 
+  ==. append ys zs                   
+      ? emptyLeft (append ys zs)
+  ==. append (append N ys) zs        
+      ? emptyLeft ys 
   *** QED 
 
 appendAssoc (C x xs) ys zs
   =   append (C x xs) (append ys zs)
   ==. x `C` append xs (append ys zs) 
-  ==. x `C` append (append xs ys) zs ∵ appendAssoc xs ys zs
+  ==. x `C` append (append xs ys) zs 
+      ? appendAssoc xs ys zs
   ==. append (x `C` append xs ys) zs
   ==. append (append (C x xs) ys) zs
   *** QED 
@@ -664,8 +655,16 @@ Lets prove the left identity monad law!
 <br>
 
 \begin{code}
-{-@ leftIdentity :: x:a -> f:(a -> L b) -> { bind (return x) f == f x } @-}
-leftIdentity x f = trivial 
+{-@ leftIdentity :: x:a -> f:(a -> L b) 
+  -> { bind (return x) f == f x } @-}
+leftIdentity x f 
+  =   bind (return x) f 
+  ==. bind (C x N) f 
+  ==. append (f x) (bind N f)
+  ==. append (f x) N 
+  ==. append (f x) empty 
+  ==. f x                   
+  *** QED 
 \end{code}
 
 <br>
@@ -701,7 +700,7 @@ leftIdentity x f
   ==. append (f x) (bind N f)
   ==. append (f x) N 
   ==. append (f x) empty 
-  ==. f x                    ∵ emptyRight (f x)   
+  ==. f x                    ? emptyRight (f x)   
   *** QED 
 \end{spec}
 <br>
@@ -729,7 +728,18 @@ Lets prove the right identity monad law!
 
 \begin{code}
 {-@ rightIdentity :: x:L a -> { bind x return == x } @-}
-rightIdentity x = trivial  
+rightIdentity N 
+  =   bind N return 
+  ==. N 
+  *** QED 
+rightIdentity (C x xs)
+  =   bind (C x xs) return 
+  ==. return x `append` bind xs return
+  ==. (C x N)  `append` bind xs return 
+  ==. (C x N)  `append` xs              ? rightIdentity xs 
+  ==. C x (append N xs)                 ? emptyLeft xs 
+  ==. C x xs 
+  *** QED   
 \end{code}
 
 <br>
@@ -761,18 +771,6 @@ Monad Laws: Right Identity, Solution
 Here is the proof:
 <br>
 \begin{spec}
-rightIdentity N 
-  =   bind N return 
-  ==. N 
-  *** QED 
-rightIdentity (C x xs)
-  =   bind (C x xs) return 
-  ==. return x `append` bind xs return
-  ==. (C x N)  `append` bind xs return 
-  ==. (C x N)  `append` xs              ∵ rightIdentity xs 
-  ==. C x (append N xs)                 ∵ emptyLeft xs 
-  ==. C x xs 
-  *** QED   
 \end{spec}
 <br>
 <br>
@@ -839,7 +837,23 @@ Lets prove the associativity monad law!
 \begin{code}
 {-@ associativity :: m:L a -> f: (a -> L b) -> g:(b -> L c)
   -> {bind (bind m f) g == bind m (\x:a -> (bind (f x) g)) } @-}
-associativity m f g = trivial  
+associativity N f g 
+  =   bind (bind N f) g
+  ==. bind N g 
+  ==. N 
+  ==. bind N (\x -> (bind (f x) g))
+  *** QED 
+associativity (C x xs) f g 
+  =   bind (bind (C x xs) f) g 
+  ==. bind (append (f x) (bind xs f)) g 
+  ==. append (bind (f x) g) (bind (bind xs f) g)            
+       ? bindAppend (f x) (bind xs f) g 
+  ==. append (bind (f x) g) (bind xs (\x -> (bind (f x) g))) 
+       ? associativity xs f g 
+  ==. append ((\x -> bind (f x) g) x) (bind xs (\x -> (bind (f x) g))) 
+       ? βequivalence f g x 
+  ==. bind (C x xs) (\x -> (bind (f x) g))
+  *** QED 
 \end{code}
 
 <br>
@@ -855,47 +869,6 @@ Hint
   - recursive call, and 
   - use of two lemmata.
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Monad Laws: Associativity, Solution
----------------------------------------------
-<br>
-Here is the proof:
-<br>
-\begin{spec}
-associativity N f g 
-  =   bind (bind N f) g
-  ==. bind N g 
-  ==. N 
-  ==. bind N (\x -> (bind (f x) g))
-  *** QED 
-associativity (C x xs) f g 
-  =   bind (bind (C x xs) f) g 
-  ==. bind (append (f x) (bind xs f)) g 
-  ==. append (bind (f x) g) (bind (bind xs f) g)            
-       ∵ bindAppend (f x) (bind xs f) g 
-  ==. append (bind (f x) g) (bind xs (\x -> (bind (f x) g))) 
-       ∵ associativity xs f g 
-  ==. append ((\x -> bind (f x) g) x) (bind xs (\x -> (bind (f x) g))) 
-       ∵ βequivalence f g x 
-  ==. bind (C x xs) (\x -> (bind (f x) g))
-  *** QED 
-\end{spec}
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 <br>
 <br>
 <br>

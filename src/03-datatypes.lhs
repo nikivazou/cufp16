@@ -10,7 +10,7 @@
 
 module DataTypes where
 import qualified Data.Text        as T
-import qualified Data.Text.Unsafe as T 
+-- import qualified Data.Text.Unsafe as T 
 
 import Prelude hiding (length, sum, take)
 import qualified Data.Set as S -- hiding (elems, insert)
@@ -369,12 +369,20 @@ Catch the The Heartbleed Bug!
 Assuming the library `Text` types...
 
 <br>
-
+<div class="hidden">
 \begin{code}
-{-@ measure tlen        :: T.Text -> Int                               @-}
+data Text 
+pack :: String -> Text 
+takeWord16 :: Int -> Text -> Text 
+pack = undefined 
+takeWord16 = undefined 
+\end{code}
+</div>
+\begin{code}
+{-@ measure tlen      :: Text -> Int                               @-}
 
-{-@ assume T.pack       :: i:String -> {o:T.Text | len i == tlen o }   @-}
-{-@ assume T.takeWord16 :: i:Nat -> {v:T.Text | i <= tlen v} -> T.Text @-}
+{-@ assume pack       :: i:String -> {o:Text | len i == tlen o }   @-}
+{-@ assume takeWord16 :: i:Nat -> {v:Text | i <= tlen v} -> Text @-}
 \end{code}
 
 
@@ -383,38 +391,10 @@ Assuming the library `Text` types...
 <br>
 
 \begin{code}
-safeTake   = T.takeWord16 2  (T.pack "Niki")
-unsafeTake = T.takeWord16 10 (T.pack "Niki")
+safeTake   = takeWord16 2  (pack "Niki")
+unsafeTake = takeWord16 10 (pack "Niki")
 \end{code}
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Safe Indexing at awake!
------------------------------
-
-<br>
-
-Specify good indexing types at [Data/ByteString/Extras](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/master/src/Data/ByteString/Extras.hs#L471) ...
-
-<br>
-<br>
-<br>
-... Liquid Haskell proves them SAFE at [users](https://github.mv.awakenetworks.net/awakenetworks/packet-analysis/blob/master/src/Awake/Protocol/TFTP.hs#L105)!
-<br>
 <br>
 <br>
 <br>

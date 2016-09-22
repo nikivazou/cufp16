@@ -9,7 +9,6 @@
 
 -- Hidden code 
 {-@ LIQUID "--higherorder"     @-}
-{-@ LIQUID "--totality"        @-}
 
 module RefinementReflection where
 import Language.Haskell.Liquid.ProofCombinators
@@ -356,11 +355,12 @@ The type of `fib` connects logic & Haskell implementation
 <br>
 
 \begin{spec}
-fib :: i:Nat -> {v:Nat | v == fib i && v == propFib i}
-
-propFib i = if i == 0 then 0 else   
-            if i == 1 then 1 else 
-            fib (i-1) + fib (i-2)
+fib :: i:Nat 
+    -> {v:Nat |  v == fib i 
+              && v == if i == 0 then 0 else
+                      if i == 1 then 1 else
+                      fib (i-1) + fib (i-2)
+       }
 \end{spec}
 
 <br>
@@ -390,7 +390,8 @@ Reflection at Result Type
 <br>
 \begin{code}
 {-@ fibEq :: () ->  {fib 1 == 1 } @-}
-fibEq _ = [fib 1] *** QED 
+fibEq _ = let f1 = fib 1 -- f1:: {f1 == fib 1 && f1 == 1} 
+          in [f1] *** QED 
 \end{code}
 <br>
 <br>
@@ -459,7 +460,7 @@ Using combinators from [`ProofCombinators`](https://github.com/ucsd-progsys/liqu
 fibThree _ 
   =   fib 3 
   ==. fib 2 + fib 1
-  ==. 1     + 1      ∵ fibTwo ()
+  ==. 1     + 1      ? fibTwo ()
   ==. 2 
   *** QED
 
@@ -482,7 +483,7 @@ fibThree _
 <br>
 <br>
 
-Pencil & Paper like Proofs
+Paper & Pencil style Proofs
 ----------------------------------------------------------
 `fib` is increasing 
 <br>
@@ -499,8 +500,8 @@ fibUp i
   | otherwise
   =   fib i
   ==. fib (i-1) + fib (i-2)
-  <=. fib i     + fib (i-2) ∵ fibUp (i-1)
-  <=. fib i     + fib (i-1) ∵ fibUp (i-2)
+  <=. fib i     + fib (i-2) ? fibUp (i-1)
+  <=. fib i     + fib (i-1) ? fibUp (i-2)
   <=. fib (i+1)
   *** QED
 
@@ -525,15 +526,32 @@ fibUp i
 
 
 
-Another Pencil & Paper like Proof
+Another Paper & Pencil like Proof
 ----------------------------------------------------------
-Can you prove that `fib` is monotonic?
+Can you fix the prove that `fib` is monotonic?
 <br>
 <br>
 \begin{code}
-{-@ fibMonotonic :: x:Nat -> y:{Nat | x < y }  -> {fib x <= fib y} / [y] @-}
+{-@ fibMonotonic :: x:Nat -> y:{Nat | x < y }  
+     -> {fib x <= fib y}  @-}
 fibMonotonic x y 
-  = trivial 
+  | y == x + 1 
+  =   fib x 
+  <=. fib (x+1) ? fibUp x 
+  <=. fib y 
+  *** QED  
+  | x < y - 1 
+  =   fib x 
+  <=. fib (y-1) 
+  <=. fib y     ? fibUp (y-1) 
+  *** QED   
+\end{code}
+<br>
+<br>
+<br>
+Note: Totality checker should be on for valid proofs 
+\begin{code}
+{-@ LIQUID "--totality"        @-}
 \end{code}
 <br>
 <br>
@@ -545,16 +563,6 @@ fibMonotonic x y
 <br>
 <br>
 <br>
-
-Hints
-
-  - case analysis on `y == x + 1`
-  - recursive call on `x` and `y-1`
-  - invokation of `fibUp` on `x` and `y-1`
-
-<br>
-<br>
-<br>
 <br>
 <br>
 <br>
@@ -570,58 +578,9 @@ Hints
 
 
 
-Another Pencil & Paper like Proof
+Generalizing monotonicity proof 
 ----------------------------------------------------------
-Proof that `fib` is monotonic?
-<br>
-<br>
-\begin{spec}
-{-@ fibMonotonic :: x:Nat -> y:{Nat | x < y }  -> {fib x <= fib y} / [y] @-}
-fibMonotonic x y 
-  | y == x + 1 
-  =   fib x 
-  <=. fib (x+1) ∵ fibUp x 
-  <=. fib y 
-  *** QED  
-  | x < y - 1 
-  =   fib x 
-  <=. fib (y-1) ? fibMonotonic x (y-1)
-  <=. fib y     ? fibUp (y-1) 
-  *** QED   
-\end{spec}
-<br>
-<br>
-
-**Note:** Proof is `fib` irrelevant! 
-Abstract all `fib` info away!
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-
-Higher Order Theorems
-----------------------------------------------------------
-Increasing implies monotonic!
+Increasing implies monotonic in general!
 <br>
 <br>
 \begin{code}
@@ -632,13 +591,13 @@ Increasing implies monotonic!
           -> {f x <= f y} / [y] @-}
 fMono f fUp x y  
   | x + 1 == y
-  = f x   <=. f (x + 1) ∵ fUp x
+  = f x   <=. f (x + 1) ? fUp x
           ==. f y       
           *** QED
 
   | x + 1 < y
-  = f x   <=. f (y-1)   ∵ fMono f fUp x (y-1)
-          <=. f y       ∵ fUp (y-1)
+  = f x   <=. f (y-1)   ? fMono f fUp x (y-1)
+          <=. f y       ? fUp (y-1)
           *** QED
 \end{code}
 <br>

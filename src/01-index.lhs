@@ -210,8 +210,8 @@ Partial Functions
 λ> :t head
 head :: [a] -> a
 
-λ> head "Awake"
-'A'
+λ> head "CUFP"
+'C'
 \end{spec}
 </div>
 

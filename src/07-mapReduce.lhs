@@ -167,7 +167,7 @@ sumEq n is
   =   msum n is 
   ==. mapReduce n sum plus is 
   ==. sum is 
-      ∵ mRTheorem n sum plus sumRightId sumDistr is 
+      ? mRTheorem n sum plus sumRightId sumDistr is 
   *** QED 
 
 {-@ sumDistr :: xs:List Int -> ys:List Int -> 
@@ -219,7 +219,7 @@ sumDistr (C x xs) ys
   =   sum (append (C x xs) ys)
   ==. sum (C x (append xs ys))
   ==. x `plus` (sum (append xs ys))
-      ∵ sumDistr xs ys
+      ? sumDistr xs ys
   ==. x `plus` (plus (sum xs) (sum ys))
   ==. x + (sum xs + sum ys)
   ==. ((x + sum xs) + sum ys)
@@ -268,7 +268,7 @@ mRTheorem n f op rightId _ N
   ==. reduce op (f N) (f N `C` N)
   ==. op (f N) (reduce op (f N) N)
   ==. op (f N) (f N)
-       ∵ rightId N
+       ? rightId N
   ==. f N 
   *** QED 
 
@@ -282,7 +282,7 @@ mRTheorem n f op rightId _ is@(C _ _)
   ==. op (f is) (reduce op (f N) N)
   ==. op (f is) (f N)
   ==. f is  
-       ∵ rightId is
+       ? rightId is
   *** QED 
 
 mRTheorem n f op rightId distrib is 
@@ -293,11 +293,11 @@ mRTheorem n f op rightId distrib is
   ==. op (f (take n is)) (reduce op (f N) (map f (chunk n (drop n is))))  
   ==. op (f (take n is)) (mapReduce n f op (drop n is)) 
   ==. op (f (take n is)) (f (drop n is)) 
-      ∵ mRTheorem n f op rightId distrib (drop n is)
+      ? mRTheorem n f op rightId distrib (drop n is)
   ==. f (append (take n is) (drop n is))
-      ∵ distrib (take n is) (drop n is)
+      ? distrib (take n is) (drop n is)
   ==. f is 
-      ∵ appendTakeDrop n is 
+      ? appendTakeDrop n is 
   *** QED  
 \end{code}
 <br>
@@ -342,7 +342,7 @@ appendTakeDrop i (C x xs)
   =   append (take i (C x xs)) (drop i (C x xs))
   ==. append (C x (take (i-1) xs)) (drop (i-1) xs)
   ==. C x (append (take (i-1) xs) (drop (i-1) xs))
-  ==. C x xs ∵ appendTakeDrop (i-1) xs 
+  ==. C x xs ? appendTakeDrop (i-1) xs 
   *** QED 
 \end{code}
 <br>
@@ -493,9 +493,12 @@ Thank You!
 ----------
 
 <br>
-<br>
 
 `cabal install liquidhaskell`
+
+<br>
+
+[https://github.com/ucsd-progsys/liquidhaskell](https://github.com/ucsd-progsys/liquidhaskell)
 
 <br>
 
