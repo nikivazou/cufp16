@@ -557,51 +557,11 @@ appendAssoc (C x xs) ys zs
 <br>
 <br>
 <br>
-Hints
+Proof (surprise!)
 
   - Case splitting, and 
   - recursive call.
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Monoid Laws: Associativity, Solution
----------------------------------------------
-<br>
-Here is the proof:
-<br>
-\begin{spec}
-appendAssoc N ys zs 
-  =   append N (append ys zs)
-  ==. append ys zs                   
-      ? emptyLeft (append ys zs)
-  ==. append (append N ys) zs        
-      ? emptyLeft ys 
-  *** QED 
-
-appendAssoc (C x xs) ys zs
-  =   append (C x xs) (append ys zs)
-  ==. x `C` append xs (append ys zs) 
-  ==. x `C` append (append xs ys) zs 
-      ? appendAssoc xs ys zs
-  ==. append (x `C` append xs ys) zs
-  ==. append (append (C x xs) ys) zs
-  *** QED 
-\end{spec}
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 <br>
 <br>
 <br>
@@ -749,7 +709,7 @@ rightIdentity (C x xs)
 <br>
 <br>
 <br>
-Hint
+Proof
 
   - Case splitting, 
   - Recursive call, and 
@@ -765,29 +725,6 @@ Hint
 <br>
 <br>
 
-Monad Laws: Right Identity, Solution
----------------------------------------------
-<br>
-Here is the proof:
-<br>
-\begin{spec}
-\end{spec}
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 
 Monoid Laws: Associativity 
 ---------------------------------------------

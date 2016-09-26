@@ -12,6 +12,7 @@
 <br>
 <br>
 
+Follow online [http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html](http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html)
 <br>
 <br>
 
@@ -305,6 +306,9 @@ Goal: Extend Type System
 
 Plan
 ----
+
+<br>
+Follow online [http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html](http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html)
 
 <br>
 
