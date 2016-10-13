@@ -418,11 +418,6 @@ Recap
 
 
 <br>
-
-<div class="fragment">
-**Next:** [Refinement Reflection](05-refinement-reflection.html) : Allow terminating functions in the logic!
-</div>
-
 <br>
 <br>
 <br>

@@ -3,16 +3,14 @@
 <br>
 <br>
 
-<h1 style="text-align:center">LiquidHaskell: </b>
-<h1 style="text-align:center">Verification of Haskell Code with SMTs</b>
+<h1 style="text-align:center">LiquidHaskell: 
+<br> Verification of Haskell Code</b>
 
 <h4 style="text-align:center"><i>Niki Vazou   </i></h4>
 <h5 style="text-align:center"><i>(UC San Diego)</i></h5>
 
 <br>
 <br>
-
-Follow online [http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html](http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html)
 <br>
 <br>
 
@@ -26,14 +24,57 @@ Follow online [http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html](
 <br>
 <br>
 
-LiquidHaskell: Verification of Haskell with SMTs
+LiquidHaskell: Verification of Haskell Code
 =======================================================
 <br>
 <br>
 <br>
-
+<p align="center">
 **Motivation:** _Why_ verification?
+</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
+Software bugs are Everywhere
+=============================
+<p align="center">
+“Due to a bug in Nobel Award Algorithm, Bob Dylan gets Nobel Price in Literature.”
+</p>
+<p align="center">
+— Oct 13, 2016
+</p>
+<p align="center">
+<img src="https://static01.nyt.com/images/2016/10/14/arts/14DYLANHOME2/14DYLANHOME2-master768.jpg" alt="The Drop The Mic Bug." style="width: 300px;" align="middle" />
+</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 <br>
 <br>
 <br>
@@ -46,6 +87,31 @@ LiquidHaskell: Verification of Haskell with SMTs
 <br>
 <br>
 
+
+Software bugs are Everywhere
+=============================
+<p align="center">
+“Airbus A400M crashed due to a software bug.”
+</p>
+<p align="center">
+— May 2015
+</p>
+<p align="center">
+<img src="https://si.wsj.net/public/resources/images/BN-NP763_aircut_P_20160419072444.jpg" alt="Plane" style="width: 300px;" align="middle" />
+</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 <br>
 <br>
 <br>
@@ -56,11 +122,102 @@ LiquidHaskell: Verification of Haskell with SMTs
 <br>
 <br>
 
+Software bugs are Everywhere
+=============================
+<p align="center">
+“[Heartbleed](https://en.wikipedia.org/wiki/Heartbleed): a security bug in the OpenSSL cryptography library.”
+</p>
+<p align="center">
+— April 2014
+</p>
+<p align="center">
+<img src="http://heartbleed.com/heartbleed.png" alt="The Heartbleed Bug." style="height: 260px;" align="middle" />
+</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
-
-Well-Typed Programs *Can* Go Wrong
+Goal: Make Bugs Difficult to Express
 ==================================
 
+<br>
+<br>
+
+Using Modern Programming Languages (e.g., Haskell, Scala, Ocaml, F#).
+
+<br>
+<br>
+
+Because of Strong Types & Lambda Calculus.
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Via compile-time sanity checks
+=====================================
+<p align="center">
+<img src="http://goto.ucsd.edu/~nvazou/images/lambda-man.png" alt="Lambda Man." style="height: 260px;" align="middle" />
+</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Fact Check: Haskell VS. Heartbleed
+---------------------------------
+<p align="center">
+<img src="http://goto.ucsd.edu/~nvazou/images/haskellbleed.png" alt="Haskell vs Heartbleed" style="height: 260px;" align="middle" />
 
 <div class="hidden">
 
@@ -94,13 +251,10 @@ main = putStrLn "Easter Egg: to force Makefile"
 <br>
 
 
-
-The Heartbleed Bug.
-------------------
-[Heartbleed](https://en.wikipedia.org/wiki/Heartbleed) is a security bug in the OpenSSL cryptography library (April 2014).
+How The Heartbleed Bug Works
+---------------------------------
 <p align="center">
-<img src="http://heartbleed.com/heartbleed.png" alt="The HEartbleed Bug." style="width: 300px;" align="middle" />
-</p>
+<img src="http://imgs.xkcd.com/comics/heartbleed_explanation.png" alt="How The Heartbleed Bug Works" style="width: 500px;" align="middle" />
 <br>
 <br>
 <br>
@@ -121,7 +275,8 @@ The Heartbleed Bug.
 <br>
 <br>
 <br>
-
+<br>
+<br>
 
 
 The Heartbleed Bug in Haskell
@@ -203,7 +358,7 @@ Reveal `6` extra characters...
 
 
 
-Partial Functions
+More Bugs: Partial Functions
 ------------
 
 <div class="fragment">
@@ -211,8 +366,8 @@ Partial Functions
 λ> :t head
 head :: [a] -> a
 
-λ> head "CUFP"
-'C'
+λ> head "Hawai'i"
+'H'
 \end{spec}
 </div>
 
@@ -240,21 +395,21 @@ head :: [a] -> a
 
 
 
-Functional Correctness
+More Bugs: Termination 
 ---------------------
 
 <div class="fragment">
 <br>
 \begin{spec}
-λ> fib 1 <= fib 42
-False
+λ> fib 4
+5
 \end{spec}
 </div>
 
 <div class="fragment">
 \begin{spec}
-λ> mapReduce 42 sum (+) [1..20]
-0 
+λ> fib 42
+...
 \end{spec}
 </div>
 
@@ -308,16 +463,10 @@ Plan
 ----
 
 <br>
-Follow online [http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html](http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html)
-
-<br>
 
 1. [**Refinements Types**](02-refinements.html)
 2. [**Data Types**](03-datatypes.html)
 3. [**Termination**](04-termination.html)
-4. [**Reflection**](05-refinement-reflection.html)
-5. [**Structural Induction**](06-structural-induction.html) 
-6. [**Case Study: MapReduce**](07-mapReduce.html)
 
 <br>
 <br>
@@ -333,6 +482,29 @@ Follow online [http://goto.ucsd.edu/~nvazou/presentations/cufp16/01-index.html](
 <br>
 <br>
 
+
+Recap
+-----
+
+<br>
+<br>
+
+1. **Refinements:** Types + Predicates
+2. **Subtyping:** SMT Implication
+3. **Measures:** Specify Properties of Data
+4. **Termination:** Use Logic to Prove Termination
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 Evaluation
 ----------
@@ -341,37 +513,15 @@ Evaluation
 
 + Diverse Code Bases
 
-+ 10KLoc / 56 Modules
++ 20KLoc
 
-+ Memory Safety, Termination, Functional Correctness
++ Memory Safety, Termination, Functional Correctness, Program Equivalence
 
-<br>
-
-<div class="fragment">
-**Inference is Crucial**
-</div>
++ **Specifications:** 1 / 10 LOC  
 
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 
-Evaluation
-----------
-
-
-<img src="img/code-spec-indiv.png" height=250px>
-
-
-+ **Specifications:** 1 / 10 LOC  (*ok*)
-
-+ **Compile Time:**  1s / 10 LOC  (*not ok!*)
-
+<br>
 <br>
 <br>
 <br>
@@ -412,7 +562,7 @@ Conclusion
 
 <br>
 
-**Refinement Types:** Automated Dependent Typing via SMT
+**Liquid Types:** Automated Verification via SMT
 
 <br>
 
@@ -421,7 +571,6 @@ Conclusion
 -------------------       ------------------------------------------------
 **Properties:**           Predicates  *+ Types*
 **Proofs:**               SMT Solvers *+ Subtyping*
-**Inference:**            Abstract Interpretation *+ Hindley-Milner*
 -------------------       ------------------------------------------------
 
 </div>
@@ -443,16 +592,20 @@ Conclusion
 
 
 
+
 Thank You!
 ----------
 
 <br>
+
+[https://github.com/ucsd-progsys/liquidhaskell](https://github.com/ucsd-progsys/liquidhaskell)
+
 <br>
 
-`cabal install liquidhaskell`
-<br>
 [`http://www.refinement-types.org`](http://www.refinement-types.org)
+
 <br>
+
 [online demo @ http://goto.ucsd.edu/liquidhaskell](http://goto.ucsd.edu/liquidhaskell)
 
 <br>
@@ -467,3 +620,5 @@ Thank You!
 <br>
 <br>
 <br>
+
+

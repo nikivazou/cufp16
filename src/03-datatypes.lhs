@@ -427,15 +427,13 @@ What properties can be expressed in the logic?
 
  - Linear Arithmetic, Booleans, Uninterpreted Functions, ... (SMT logic)
  
- - Terminating Reflected Haskell functions.
+ - Terminating Haskell functions.
 
 <br>
 
 <div class="fragment">
 
 **Next:** [Termination](04-termination.html)
-
-**Next:** [Refinement Reflection](05-refinement-reflection.html)
 
 </div>
 
