@@ -3,7 +3,7 @@
 <br>
 <br>
 
-<h1 style="text-align:center">LiquidHaskell: 
+<h1 style="text-align:center">Liquid Haskell: 
 <br> Verification of Haskell Code</b>
 
 <h4 style="text-align:center"><i>Niki Vazou   </i></h4>
@@ -24,7 +24,7 @@
 <br>
 <br>
 
-LiquidHaskell: Verification of Haskell Code
+Liquid Haskell: Verification of Haskell Code
 =======================================================
 <br>
 <br>
@@ -32,40 +32,6 @@ LiquidHaskell: Verification of Haskell Code
 <p align="center">
 **Motivation:** _Why_ verification?
 </p>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Software bugs are Everywhere
-=============================
-<p align="center">
-“Due to a bug in Nobel Award Algorithm, Bob Dylan gets Nobel Price in Literature.”
-</p>
-<p align="center">
-— Oct 13, 2016
-</p>
-<p align="center">
-<img src="https://static01.nyt.com/images/2016/10/14/arts/14DYLANHOME2/14DYLANHOME2-master768.jpg" alt="The Drop The Mic Bug." style="width: 300px;" align="middle" />
-</p>
-<br>
-<br>
 <br>
 <br>
 <br>
@@ -155,6 +121,34 @@ Software bugs are Everywhere
 <br>
 <br>
 <br>
+
+How The Heartbleed Bug Works
+---------------------------------
+<p align="center">
+<img src="http://imgs.xkcd.com/comics/heartbleed_explanation.png" alt="How The Heartbleed Bug Works" style="width: 500px;" align="middle" />
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 
 Goal: Make Bugs Difficult to Express
 ==================================
@@ -251,32 +245,6 @@ main = putStrLn "Easter Egg: to force Makefile"
 <br>
 
 
-How The Heartbleed Bug Works
----------------------------------
-<p align="center">
-<img src="http://imgs.xkcd.com/comics/heartbleed_explanation.png" alt="How The Heartbleed Bug Works" style="width: 500px;" align="middle" />
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 
 
 The Heartbleed Bug in Haskell
@@ -285,7 +253,7 @@ The Heartbleed Bug in Haskell
 <div class="fragment">
 \begin{spec}
 λ> :m +Data.Text Data.Text.Unsafe
-λ> let text = pack "Niki"
+λ> let text = pack "hat"
 λ> :t takeWord16
     takeWord16 :: Int -> Text -> Text
 \end{spec}
@@ -335,12 +303,13 @@ The Heartbleed Bug in Haskell
 But, `10` is a good argument 
 -------------------------
 
-Reveal `6` extra characters...
+<br>
+Reveal `7` extra characters...
 <br>
 <div class="fragment">
 \begin{spec}
 λ>  takeWord16 10 text
-"Niki\33624\5479\SOH\NUL\60480\5115"
+"hat\33624\5479\SOH\NUL\60480\5115\5479"
 \end{spec}
 </div>
 
@@ -358,27 +327,21 @@ Reveal `6` extra characters...
 
 
 
-More Bugs: Partial Functions
+More Bugs: Program Equivalence
 ------------
 
+<br>
 <div class="fragment">
 \begin{spec}
-λ> :t head
-head :: [a] -> a
+λ> sum  [1..1000]
+500500
 
-λ> head "Hawai'i"
-'H'
+λ> psum [1..1000]
+0
 \end{spec}
 </div>
 
-<br>
 
-<div class="fragment">
-\begin{spec}
-λ> head []
-*** Exception: Prelude.head: empty list
-\end{spec}
-</div>
 
 <br>
 <br>
@@ -395,21 +358,17 @@ head :: [a] -> a
 
 
 
-More Bugs: Termination 
+More Bugs: Information Flow 
 ---------------------
 
 <div class="fragment">
 <br>
 \begin{spec}
-λ> fib 4
-5
-\end{spec}
-</div>
+λ> do {submitPaper;  ask "Who else submitted?"}
 
-<div class="fragment">
-\begin{spec}
-λ> fib 42
-...
+Current Submissions:
+1. N. Vazou and Y. Smaragdakis. Liquid Pointers 
+2. ...
 \end{spec}
 </div>
 
@@ -466,24 +425,24 @@ Plan
 
 1. [**Refinements Types**](02-refinements.html)
 2. [**Data Types**](03-datatypes.html)
-3. [**Termination**](04-termination.html)
-4. [**Reflection**](05-refinement-reflection.html)
-5. [**Structural Induction**](06-structural-induction.html) 
-6. [**Case Study: MapReduce**](07-mapReduce.html)
+3. [**Refinement Reflection**](05-refinement-reflection.html)
+4. [**Case Study: Verification MapReduce**](07-mapReduce.html)
+5. [**Information Flow Security Policies**](08-security.html)
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+<div class="hidden">
 
 
 Recap
@@ -625,3 +584,4 @@ Thank You!
 <br>
 
 
+</div>

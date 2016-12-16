@@ -60,6 +60,9 @@ data Info = Info { i_file  :: FilePath
                  }
             deriving (Show)
 
+dummyInfo :: Info 
+dummyInfo = Info "" 0 "" 
+
 data Chapter = Ch { c_num  :: Int
                   , c_name :: (Ref, Info)
                   , c_secs :: [(Int, Ref, Info)]
@@ -105,7 +108,7 @@ mkChapter :: (Int, FilePath, [(Ref, Info)]) -> Chapter
 mkChapter (i, f, ri:ris) = Ch i ri secs
   where
     secs = zipWith (\j (x, y) -> (j,x,y)) [1..] ris
-
+mkChapter (i, f, []) = Ch i ("", dummyInfo) [] 
 
 chaptersHtml :: [Chapter] -> [String]
 chaptersHtml = concatMap chapterHtml

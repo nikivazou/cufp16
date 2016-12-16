@@ -9,7 +9,7 @@
 {-@ LIQUID "--diff"           @-}
 
 module DataTypes where
-import qualified Data.Text        as T
+-- import qualified Data.Text        as T
 -- import qualified Data.Text.Unsafe as T 
 
 import Prelude hiding (length, sum, take)
@@ -242,6 +242,8 @@ tail _        = impossible "tail"
 <br>
 <br>
 
+<div class="hidden">
+
 Naming Non-Empty Lists
 ----------------------
 
@@ -305,6 +307,8 @@ Partial Functions are _automatically_ detected when `totality` check is on!
 <br>
 <br>
 <br>
+
+</div>
 
 Back to `average`
 ---------------------------------
@@ -391,8 +395,8 @@ takeWord16 = undefined
 <br>
 
 \begin{code}
-safeTake   = takeWord16 2  (pack "Niki")
-unsafeTake = takeWord16 10 (pack "Niki")
+safeTake   = takeWord16 2  (pack "hat")
+unsafeTake = takeWord16 10 (pack "hat")
 \end{code}
 
 <br>
@@ -418,7 +422,7 @@ Recap
 <br>
 
 1. **Refinements:** Types + Predicates
-2. **Subtyping:** SMT Implication
+2. **Automation:** SMT Implication
 3. <div class="fragment">**Measures:** Specify Properties of Data</div>
 
 <br>
@@ -433,7 +437,7 @@ What properties can be expressed in the logic?
 
 <div class="fragment">
 
-**Next:** [Termination](04-termination.html)
+**Next:** [Refinement Reflection](05-refinement-reflection.html)
 
 </div>
 

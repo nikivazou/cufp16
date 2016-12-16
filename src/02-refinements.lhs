@@ -170,6 +170,77 @@ poss     =  [0, 1, 2, 3]
 <br>
 <br>
 
+Type Checking 
+---------------------------
+
+\begin{spec}
+{-@ type Pos = {v:Int | 0 < v} @-}
+
+{-@ poss :: [Pos]               @-}
+poss     =  [1, 2, 3]
+\end{spec}
+
+<br>
+
+Type Checking Via Implication Checking.
+<br>
+
+\begin{spec}
+v = 1 => 0 < v 
+v = 2 => 0 < v 
+v = 3 => 0 < v 
+\end{spec}
+
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div class="hidden">
+
+
+SMTs to Automate Type Checking 
+---------------------------
+
+<br>
+
+\begin{spec}
+{-@ type Pos = {v:Int | 0 < v} @-}
+\end{spec}
+
+
+<br>
+
+Refinements Drawn from Decidable logics.
+
+<br>
+
+For automatic, decidable (and thus predictable) SMT type checking.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
 Refinement Type Checking
 ========================
 
@@ -394,8 +465,9 @@ four  = x + 1          -- x = 3 |- {v = x + 1} <: Nat
 
 
 
+</div>
 
-[SMT](http://en.wikipedia.org/wiki/Satisfiability_modulo_theories) Automates Subtyping
+[SMT](http://en.wikipedia.org/wiki/Satisfiability_modulo_theories) Automates Implication Checking
 ------------------------
 
 <br>
@@ -538,9 +610,7 @@ avg2 x y   = safeDiv (x + y) 2
 
 **Verifies As**
 
-$$\inferrule{}{(v = 2) \Rightarrow (v \not = 0)}
-            {\bindx{x}{\Int}, \bindx{y}{\Int} \vdash \reftx{v}{v = 2} \preceq \reftx{v}{v \not = 0}}
-$$
+$${(v = 2) \Rightarrow (v \not = 0)}$$
 
 
 <br>
@@ -621,7 +691,7 @@ Via Refined Input- and Output- Types
 <div class="fragment">
 **Verify Properties**
 
-Via SMT based Predicate Subtyping
+Via SMT based Implication Checking
 </div>
 
 

@@ -654,16 +654,15 @@ Recap
 <br>
 
 1. **Refinements:** Types + Predicates
-2. **Subtyping:** SMT Implication
+2. **Automation:** SMT Implication
 3. **Measures:** Specify Properties of Data
-4. **Termination:** Use Logic to Prove Termination
-5. <div class="fragment">**Reflection:**</div> Allow Haskell functions in Logic! 
+4. <div class="fragment">**Reflection:**</div> Allow Haskell functions in Logic! 
 
 
 <br>
 
 <div class="fragment">
-**Next:** [Structural Induction](06-structural-induction.html): Proving Theorems on Lists!
+**Next:** [Case Study: MapReduce](07-mapReduce.html): Program Properties that matter!
 </div>
 <br>
 <br>

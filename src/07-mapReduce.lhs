@@ -131,12 +131,12 @@ sum  :: List Int -> Int
 sum N        = 0 
 sum (C x xs) = x `plus` sum xs
 
-{-@ reflect msum @-}
-msum :: Int -> List Int -> Int 
-msum n is = mapReduce n sum plus is 
+{-@ reflect psum @-}
+psum :: Int -> List Int -> Int 
+psum n is = mapReduce n sum plus is 
 \end{code}
 
-**Question:** Is `msum` equivalent to `sum`?
+**Question:** Is `psum` equivalent to `sum`?
 <br>
 <br>
 <br>
@@ -162,9 +162,9 @@ Proving Code Equivalence
 -------------------------
 
 \begin{code}
-{-@ sumEq :: n:Int -> is:List Int -> { sum is == msum n is } @-}
+{-@ sumEq :: n:Int -> is:List Int -> { sum is == psum n is } @-}
 sumEq n is 
-  =   msum n is 
+  =   psum n is 
   ==. mapReduce n sum plus is 
   ==. sum is 
       ? mRTheorem n sum plus sumRightId sumDistr is 
@@ -459,49 +459,21 @@ append (C x xs) ys = x `C` (append xs ys)
 <br>
 <br>
 
-
 Recap
 -----
 
 <br>
 <br>
 
--  **Refinement Reflection:** Allow Haskell functions in Logic
--  <div class="fragment">**Case Study:**</div> Prove Program Equivalence 
-
-<br>
-<br>
-
-Prove crucial properties **for** Haskell **in** Haskell!
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Thank You!
-----------
+1. **Refinements:** Types + Predicates
+2. **Automation:** SMT Implication
+3. **Measures:** Specify Properties of Data
+4. **Reflection:** Allow Haskell functions in Logic! 
+5. <div class="fragment">**Case Study:**</div> Prove Program Equivalence
 
 <br>
 
-`cabal install liquidhaskell`
-
-<br>
-
-[https://github.com/ucsd-progsys/liquidhaskell](https://github.com/ucsd-progsys/liquidhaskell)
-
-<br>
-
-[`http://www.refinement-types.org`](http://www.refinement-types.org)
-
-<br>
-
-[online demo @ http://goto.ucsd.edu/liquidhaskell](http://goto.ucsd.edu/liquidhaskell)
+**Next:** [Information Flow](08-security.html): Refinement Types for Security Policies
 
 <br>
 <br>
@@ -513,6 +485,3 @@ Thank You!
 <br>
 <br>
 <br>
-<br>
-<br>
-
