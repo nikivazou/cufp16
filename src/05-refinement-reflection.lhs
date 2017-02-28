@@ -68,13 +68,25 @@ Allow terminating **Haskell** functions into the logic!
 Theorems about Haskell functions
 --------------------------------
 
+<br> 
+
+e.g. Equivalence of Parallelization
+<br>
+
+
+\begin{spec}
+forall xs. sum xs == psum xs
+\end{spec}
+
+<div class="hidden">
+
 <br>
 <p align="center">
 A. Farmer *et al*: Reasoning with the HERMIT 
 <br><br>
 <img src="http://goto.ucsd.edu/~nvazou/images/hermit_laws.png" alt="Hermit Laws" style="width: 350px;" align="middle" />
 </p>
-
+</div>
 <br>
 <br>
 <br>
@@ -279,19 +291,21 @@ Can we express them in Liquid Haskell?
 Refinement Reflection
 --------------------------
 <br>
-Reflect terminating `fib` in the logic.
+Reflect `fib` in the logic.
 <br>
 
 \begin{code}
 {-@ reflect fib @-}
-{-@ fib :: i:Nat -> Nat @-}
+{-@ fib :: i:Int -> Int @-}
 fib i | i == 0    = 0 
       | i == 1    = 1 
       | otherwise = fib (i-1) + fib (i-2)
 \end{code}
 <br>
 
-Now `fib` can live in the Liquid Types!
+- Prove `fib` terminates
+- Reflect `fib` into the logic!
+
 <br>
 <br>
 <br>

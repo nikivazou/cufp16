@@ -190,7 +190,7 @@ Type Checking
 \begin{spec}
 {-@ type Pos = {v:Int | 0 < v} @-}
 
-{-@ poss :: [Pos]               @-}
+{-@ poss :: [Pos]              @-}
 poss     =  [1, 2, 3]
 \end{spec}
 
@@ -281,12 +281,15 @@ Refinement Reflection
 Theorems about Haskell functions
 --------------------------------
 
+<br> 
+
+e.g. Equivalence of Parallelization
 <br>
-<p align="center">
-A. Farmer *et al*: Reasoning with the HERMIT 
-<br><br>
-<img src="http://goto.ucsd.edu/~nvazou/images/hermit_laws.png" alt="Hermit Laws" style="width: 350px;" align="middle" />
-</p>
+
+
+\begin{spec}
+forall xs. sum xs == psum xs
+\end{spec}
 
 <br>
 <br>
@@ -313,7 +316,7 @@ Theorems about Haskell functions
 <br>
 <br>
 <br>
-Can we express the above theorems in Liquid Haskell?
+Can we express the above theorem in Liquid Haskell?
 <br>
 <br>
 
@@ -379,38 +382,6 @@ and allows for pretty proofs!
 
 {-@ propOnePlusOne :: () ->  {v: Proof | 1 + 1 == 2} @-}
 propOnePlusOne _ = trivial
-\end{code}
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Make the theorems even prettier!
---------------------------------
-
-<br>
-
-[`ProofCombinators`](https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/ProofCombinators.hs) comes with Liquid Haskell 
-and allows for pretty proofs! 
-
-<br>
-\begin{code}
-{-@ propOnePlusOne' :: _ ->  { 1 + 1 == 2 } @-}
-propOnePlusOne' _ = trivial *** QED 
 \end{code}
 
 <br>

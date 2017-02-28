@@ -11,7 +11,7 @@
 
 module MapReduce where
 
-import Prelude hiding (mconcat, map, split, take, drop, sum)
+import Prelude hiding (mconcat, map, split, take, drop, sum, (++))
 import Language.Haskell.Liquid.ProofCombinators 
 
 map :: (a -> b) -> List a -> List b
@@ -28,8 +28,8 @@ mRTheorem :: Int -> (List a -> b) -> (b -> b -> b)
 appendTakeDrop :: Int -> List a -> Proof 
 
 llen :: List a -> Int 
-
-append :: List a -> List a -> List a 
+{-@ infix ++ @-}
+(++) :: List a -> List a -> List a 
 drop :: Int -> List a -> List a 
 take :: Int -> List a -> List a 
 \end{code}
@@ -122,14 +122,14 @@ Use Case: Summing List
 ----------------------
 
 \begin{code}
-{-@ reflect plus @-}
-plus :: Int -> Int -> Int 
-plus x y = x + y 
-
 {-@ reflect sum @-}
 sum  :: List Int -> Int 
 sum N        = 0 
 sum (C x xs) = x `plus` sum xs
+
+{-@ reflect plus @-}
+plus :: Int -> Int -> Int 
+plus x y = x + y 
 
 {-@ reflect psum @-}
 psum :: Int -> List Int -> Int 
@@ -170,10 +170,11 @@ sumEq n is
       ? mRTheorem n sum plus sumRightId sumDistr is 
   *** QED 
 
-{-@ sumDistr :: xs:List Int -> ys:List Int -> 
-      {sum (append xs ys) == plus (sum xs) (sum ys)} @-}
+{-@ sumDistr   :: xs:List Int -> ys:List Int -> 
+      {sum (xs ++ ys) == plus (sum xs) (sum ys)} @-}
 
-{-@ sumRightId :: xs:List Int -> {plus (sum xs) (sum N) == sum xs } @-}
+{-@ sumRightId :: xs:List Int -> 
+      {plus (sum xs) (sum N) == sum xs} @-}
 \end{code}
 
 <br>
@@ -210,15 +211,15 @@ sumRightId xs
 
 \begin{code}
 sumDistr N ys 
-  =   sum (append N ys)
+  =   sum (N ++ ys)
   ==. sum ys
   ==. plus 0       (sum ys)
   ==. plus (sum N) (sum ys)
   *** QED 
 sumDistr (C x xs) ys  
-  =   sum (append (C x xs) ys)
-  ==. sum (C x (append xs ys))
-  ==. x `plus` (sum (append xs ys))
+  =   sum ((C x xs) ++ ys)
+  ==. sum (C x (xs ++ ys))
+  ==. x `plus` (sum (xs ++ ys))
       ? sumDistr xs ys
   ==. x `plus` (plus (sum xs) (sum ys))
   ==. x + (sum xs + sum ys)
@@ -255,7 +256,7 @@ Map Reduce Equivalence
 {-@ mRTheorem :: n:Int -> f:(List a -> b) -> op:(b -> b -> b)
      -> rightId:(xs:List a -> {op (f xs) (f N) == f xs } ) 
      -> distrib:(xs:List a -> ys:List a 
-                           -> {f (append xs ys) == op (f xs) (f ys)} )
+                           -> {f (xs ++ ys) == op (f xs) (f ys)} )
      -> is:List a 
      -> { mapReduce n f op is == f is }
      / [llen is]
@@ -294,7 +295,7 @@ mRTheorem n f op rightId distrib is
   ==. op (f (take n is)) (mapReduce n f op (drop n is)) 
   ==. op (f (take n is)) (f (drop n is)) 
       ? mRTheorem n f op rightId distrib (drop n is)
-  ==. f (append (take n is) (drop n is))
+  ==. f ((take n is) ++ (drop n is))
       ? distrib (take n is) (drop n is)
   ==. f is 
       ? appendTakeDrop n is 
@@ -325,23 +326,23 @@ Append of Take and Drop
 
 \begin{code}
 {-@ appendTakeDrop :: i:Nat -> xs:{List a | i <= llen xs} ->
-     {xs == append (take i xs) (drop i xs) }  @-}
+     {xs == (take i xs) ++ (drop i xs) }  @-}
 
 appendTakeDrop i N 
-  =   append (take i N) (drop i N)
-  ==. append N N 
+  =    (take i N) ++  (drop i N)
+  ==.  N ++ N 
   ==. N 
   *** QED 
 appendTakeDrop i (C x xs)
   | i == 0 
-  =   append (take 0 (C x xs)) (drop 0 (C x xs))
-  ==. append N (C x xs)
+  =    (take 0 (C x xs)) ++ (drop 0 (C x xs))
+  ==.  N  ++ (C x xs)
   ==. C x xs 
   *** QED 
   | otherwise
-  =   append (take i (C x xs)) (drop i (C x xs))
-  ==. append (C x (take (i-1) xs)) (drop (i-1) xs)
-  ==. C x (append (take (i-1) xs) (drop (i-1) xs))
+  =    (take i (C x xs))  ++ (drop i (C x xs))
+  ==.  (C x (take (i-1) xs))  ++ (drop (i-1) xs)
+  ==. C x ( (take (i-1) xs) ++ (drop (i-1) xs))
   ==. C x xs ? appendTakeDrop (i-1) xs 
   *** QED 
 \end{code}
@@ -435,9 +436,9 @@ take i (C x xs)
   = C x (take (i-1) xs)
 
 
-{-@ reflect append @-}
-append N        ys = ys  
-append (C x xs) ys = x `C` (append xs ys)
+{-@ reflect ++  @-}
+N ++        ys = ys  
+(C x xs) ++ ys = x `C` (xs ++ ys)
 \end{code}
 
 <br>
@@ -458,6 +459,67 @@ append (C x xs) ys = x `C` (append xs ys)
 <br>
 <br>
 <br>
+
+
+Recap
+-----
+
+<br>
+<br>
+
+-  **Refinement Reflection:** Allow Haskell functions in Logic
+-  <div class="fragment">**Case Study:**</div> Prove Program Equivalence 
+
+<br>
+<br>
+
+Prove crucial properties **for** Haskell **in** Haskell!
+
+<br>
+
+where Haskell = a general purspose programming language.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Thank You!
+----------
+
+<br>
+
+`cabal install liquidhaskell`
+
+<br>
+
+[https://github.com/ucsd-progsys/liquidhaskell](https://github.com/ucsd-progsys/liquidhaskell)
+
+<br>
+
+[`http://www.refinement-types.org`](http://www.refinement-types.org)
+
+<br>
+
+[online demo @ http://goto.ucsd.edu/liquidhaskell](http://goto.ucsd.edu/liquidhaskell)
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 
 Recap
 -----
