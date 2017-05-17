@@ -670,7 +670,8 @@ Recap
 1. **Refinements:** Types + Predicates
 2. **Automation:** SMT Implication
 3. **Measures:** Specify Properties of Data
-4. <div class="fragment">**Reflection:**</div> Allow Haskell functions in Logic! 
+4. **Termination:** Semantic Termination Checking
+5. <div class="fragment">**Reflection:**</div> Allow Haskell functions in Logic! 
 
 
 <br>

@@ -346,11 +346,11 @@ Diverging Functions
 -----------------------------------
 
 <br>
-`Lazy` annotation deactivates termination checking.
+`lazy` annotation deactivates termination checking.
 
 <br>
 \begin{code}
-{-@ Lazy repeat @-}
+{-@ lazy repeat @-}
 
 repeat x = x:repeat x 
 \end{code}
@@ -415,6 +415,22 @@ Recap
 2. **Subtyping:** SMT Implication
 3. **Measures:** Specify Properties of Data
 4. <div class="fragment">**Termination:**</div> Use Logic to Prove Termination 
+
+<br>
+What properties can be expressed in the logic? 
+<br> 
+
+ - Linear Arithmetic, Booleans, Uninterpreted Functions, ... (SMT logic)
+ 
+ - Terminating Haskell functions.
+
+<br>
+
+<div class="fragment">
+
+**Next:** [Refinement Reflection](05-refinement-reflection.html)
+
+</div>
 
 
 <br>

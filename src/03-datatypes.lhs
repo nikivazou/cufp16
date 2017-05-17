@@ -437,6 +437,8 @@ What properties can be expressed in the logic?
 
 <div class="fragment">
 
+**Next:** [Termination](04-termination.html)
+<br>
 **Next:** [Refinement Reflection](05-refinement-reflection.html)
 
 </div>

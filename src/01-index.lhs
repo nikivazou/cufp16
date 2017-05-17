@@ -7,13 +7,14 @@
 <br> Verification of Haskell Code</b>
 
 <h4 style="text-align:center"><i>Niki Vazou   </i></h4>
-<h5 style="text-align:center"><i>(UC San Diego)</i></h5>
+<h5 style="text-align:center"><i>(University of Maryland)</i></h5>
 
 <br>
 <br>
 <br>
 <br>
-
+<h6 style="text-align:center">
+[http://goto.ucsd.edu/~nvazou/presentations/shonan17/01-index.html](http://goto.ucsd.edu/~nvazou/presentations/shonan17/01-index.html) </h6>
 <br>
 <br>
 <br>
@@ -367,7 +368,7 @@ More Bugs: Information Flow
 λ> do {submitPaper;  ask "Who else submitted?"}
 
 Current Submissions:
-1. N. Vazou and Y. Smaragdakis. Liquid Pointers 
+1. N. Vazou et. al. Liquid Things 
 2. ...
 \end{spec}
 </div>
@@ -425,9 +426,10 @@ Plan
 
 1. [**Refinements Types**](02-refinements.html)
 2. [**Data Types**](03-datatypes.html)
-3. [**Refinement Reflection**](05-refinement-reflection.html)
-4. [**Case Study: Verification MapReduce**](07-mapReduce.html)
-5. [**Information Flow Security Policies**](08-security.html)
+3. [**Termination**](04-termination.html)
+4. [**Refinement Reflection**](05-refinement-reflection.html)
+5. [**Case Study: Verification MapReduce**](07-mapReduce.html)
+6. [**Information Flow Security Policies**](08-security.html)
 <br>
 <br>
 <br>

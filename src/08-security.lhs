@@ -136,7 +136,7 @@ where the `Tagged` monad is policy parametric
 <br>
 <br>
 \begin{spec}
-data Tagged <p :: User -> Prop> a
+data Tagged <p :: User -> Bool> a
 \end{spec}
 <br>
 
@@ -166,15 +166,15 @@ Policy Propagation: The Tagged Monad
 
 <br>
 \begin{spec}
-(>>=)  :: forall <p :: User -> Prop>. 
+(>>=)  :: forall <p :: User -> Bool>. 
           Tagged <p> a
        -> (a -> Tagged <p> b)
        -> Tagged <p> b
 
-return :: forall <p :: User -> Prop>. 
+return :: forall <p :: User -> Bool>. 
           a -> Tagged <p> a 
 
-print  :: forall <p :: User -> Prop>. 
+print  :: forall <p :: User -> Bool>. 
           viewer:Tagged <p> (User<p>) 
        -> msg:Tagged <p> String 
        -> IO ()
@@ -200,7 +200,7 @@ The Chair can see more...
 <br>
 
 \begin{spec}
-{-@ whenUserIsChair :: forall <p :: User -> Prop>.  
+{-@ whenUserIsChair :: forall <p :: User -> Bool>.  
      Tagged <{\v -> v == Chair}>[a] 
   -> Tagged <p> [a] 
    @-}
@@ -303,9 +303,10 @@ Recap
 1. **Refinements:** Types + Predicates
 2. **Subtyping:** SMT Implication
 3. **Measures:** Specify Properties of Data
-4. **Reflection:** Allow Haskell functions in Logic 
-5. **Case Study:** Prove Program Equivalence
-6. <div class="fragment"> **Information Flow Security Policies** </div>
+4. **Termination:** Semantic Termination Checking
+5. **Reflection:** Allow Haskell functions in Logic 
+6. **Case Study:** Prove Program Equivalence
+7. <div class="fragment"> **Information Flow Security Policies** </div>
 
 <br>
 <br>

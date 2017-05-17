@@ -530,8 +530,9 @@ Recap
 1. **Refinements:** Types + Predicates
 2. **Automation:** SMT Implication
 3. **Measures:** Specify Properties of Data
-4. **Reflection:** Allow Haskell functions in Logic! 
-5. <div class="fragment">**Case Study:**</div> Prove Program Equivalence
+4. **Termination:** Semantic Termination Checking
+5. **Reflection:** Allow Haskell functions in Logic! 
+6. <div class="fragment">**Case Study:**</div> Prove Program Equivalence
 
 <br>
 

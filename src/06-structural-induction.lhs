@@ -22,6 +22,7 @@ length :: L a -> Int
 mapFusion :: (b -> c) -> (a -> b) -> L a -> Proof
 
 mapId :: L a -> Proof 
+mapIdAuto :: L a -> Proof 
 emptyLeft :: L a -> Proof
 emptyRight :: L a -> Proof
 appendAssoc :: L a -> L a -> L a -> Proof 
@@ -276,6 +277,53 @@ Proof:
 <br>
 <br>
 
+Functor Laws: Identity
+---------------------------------------------
+<br>
+Pretty Verbose Proof: Proof Automation!
+<br>
+
+\begin{code}
+{-@ LIQUID "--automatic-instances=liquidinstanceslocal" @-}
+\end{code}
+
+\begin{code}
+{-@ automatic-instances mapIdAuto @-}
+
+{-@ mapIdAuto :: xs:L a -> { map id xs == id xs } @-}
+mapIdAuto N 
+  =   trivial 
+mapIdAuto (C x xs)
+  =  mapIdAuto xs
+\end{code}
+
+<br>
+
+Proof Generation: 
+
+  - Automatic Unfolding, but
+  - Manual case splitting.
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
 Functor Laws: Distribution
 ---------------------------------------------
 <br>
@@ -286,6 +334,8 @@ Lets prove the distribution functor law!
 Or, `mapFusion`!
 
 \begin{code}
+{- automatic-instances mapFusion @-}
+
 {-@ mapFusion :: f:(b -> c) -> g:(a -> b) -> xs:L a
   -> { map  (compose f g) xs == (compose (map f) (map g)) (xs) } @-}
 mapFusion f g xs = trivial  
@@ -402,6 +452,8 @@ Lets prove the left identity monoid law!
 <br>
 
 \begin{code}
+{- automatic-instances emptyLeft @-}
+
 {-@ emptyLeft :: x:L a 
   -> { append empty x == x }  @-}
 emptyLeft x = trivial 
@@ -463,6 +515,7 @@ Lets prove the right identity monoid law!
 <br>
 
 \begin{code}
+{- automatic-instances emptyRight @-}
 {-@ emptyRight :: x:L a 
   -> { append x empty == x }  @-}
 emptyRight x = trivial 
@@ -525,6 +578,7 @@ emptyRight (C x xs)
 <br>
 <br>
 
+
 Monoid Laws: Associativity
 ---------------------------------------------
 <br>
@@ -532,6 +586,42 @@ Lets prove the associativity monoid law!
 <br>
 
 \begin{code}
+{- automatic-instances appendAssoc @-}
+
+{-@ appendAssoc :: xs:L a -> ys:L a -> zs:L a 
+  -> {append xs (append ys zs) == append (append xs ys) zs } @-}
+appendAssoc xs ys zs 
+  =   trivial  
+\end{code}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
+Monoid Laws: Associativity, Solution 
+---------------------------------------------
+<br>
+Lets prove the associativity monoid law!
+<br>
+
+\begin{spec}
 {-@ appendAssoc :: xs:L a -> ys:L a -> zs:L a 
   -> {append xs (append ys zs) == append (append xs ys) zs } @-}
 appendAssoc N ys zs 
@@ -548,7 +638,7 @@ appendAssoc (C x xs) ys zs
   ==. append (x `C` append xs ys) zs
   ==. append (append (C x xs) ys) zs
   *** QED 
-\end{code}
+\end{spec}
 
 <br>
 <br>
@@ -615,16 +705,12 @@ Lets prove the left identity monad law!
 <br>
 
 \begin{code}
+{- automatic-instances leftIdentity @-}
+
 {-@ leftIdentity :: x:a -> f:(a -> L b) 
   -> { bind (return x) f == f x } @-}
 leftIdentity x f 
-  =   bind (return x) f 
-  ==. bind (C x N) f 
-  ==. append (f x) (bind N f)
-  ==. append (f x) N 
-  ==. append (f x) empty 
-  ==. f x                   
-  *** QED 
+  =   trivial 
 \end{code}
 
 <br>
@@ -687,19 +773,11 @@ Lets prove the right identity monad law!
 <br>
 
 \begin{code}
+{- automatic-instances rightIdentity @-}
+
 {-@ rightIdentity :: x:L a -> { bind x return == x } @-}
-rightIdentity N 
-  =   bind N return 
-  ==. N 
-  *** QED 
-rightIdentity (C x xs)
-  =   bind (C x xs) return 
-  ==. return x `append` bind xs return
-  ==. (C x N)  `append` bind xs return 
-  ==. (C x N)  `append` xs              ? rightIdentity xs 
-  ==. C x (append N xs)                 ? emptyLeft xs 
-  ==. C x xs 
-  *** QED   
+rightIdentity xs 
+  =   trivial  
 \end{code}
 
 <br>
@@ -726,27 +804,65 @@ Proof
 <br>
 
 
+
+Monoid Laws: Right Identity, Solution
+---------------------------------------------
+<br>
+Lets prove the right identity monad law!
+<br>
+
+\begin{spec}
+rightIdentity N 
+  =   bind N return 
+  ==. N 
+  *** QED 
+rightIdentity (C x xs)
+  =   bind (C x xs) return 
+  ==. return x `append` bind xs return
+  ==. (C x N)  `append` bind xs return 
+  ==. (C x N)  `append` xs              ? rightIdentity xs 
+  ==. C x (append N xs)                 ? emptyLeft xs 
+  ==. C x xs 
+  *** QED   
+\end{spec}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
 Monoid Laws: Associativity 
 ---------------------------------------------
 <br>
-To prove associativity, lets assume two helper lemmata!
+To prove associativity, lets assume a helper lemma!
 <br>
 
-- Beta Equivalence on bind 
-
-\begin{spec}
-βequivalence :: f:(a -> L b) -> g:(b -> L c) -> x:a -> 
-     {bind (f x) g == (\y:a -> bind (f y) g) (x)} 
-\end{spec}
-
-<br> 
 
 - Bind distribution 
 
-\begin{spec}
+\begin{code}
+{-@ automatic-instances bindAppend @-}
 bindAppend :: xs:L a -> ys:L a -> f:(a -> L b)
      -> { bind (append xs ys) f == append (bind xs f) (bind ys f) }
-\end{spec}
+bindAppend N _ _ 
+  = trivial 
+bindAppend (C x xs) ys f 
+  = appendAssoc (f x) (bind xs f) (bind ys f)
+  &&& bindAppend xs ys f 
+\end{code}
 <br>
 <br>
 <br>
@@ -772,8 +888,38 @@ Lets prove the associativity monad law!
 <br>
 
 \begin{code}
+{- automatic-instances associativity @-}
 {-@ associativity :: m:L a -> f: (a -> L b) -> g:(b -> L c)
   -> {bind (bind m f) g == bind m (\x:a -> (bind (f x) g)) } @-}
+associativity xs f g 
+  =   trivial 
+\end{code}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+Monoid Laws: Associativity, Solution 
+---------------------------------------------
+<br>
+Lets prove the associativity monad law!
+<br>
+
+\begin{spec}
 associativity N f g 
   =   bind (bind N f) g
   ==. bind N g 
@@ -791,7 +937,7 @@ associativity (C x xs) f g
        ? βequivalence f g x 
   ==. bind (C x xs) (\x -> (bind (f x) g))
   *** QED 
-\end{code}
+\end{spec}
 
 <br>
 <br>
@@ -820,9 +966,9 @@ Hint
 
 Proving the Beta Equivalence Lemma
 -----------------------------------
-<br>
-- Proof requires assumptions for β-equivalence ...
-<br>
+- Explicit Proof requires assumptions for β-equivalence ...
+
+
 \begin{code}
 {-@ βequivalence :: f:(a -> L b) -> g:(b -> L c) -> x:a -> 
      {bind (f x) g == (\y:a -> bind (f y) g) (x)}  @-}
@@ -854,53 +1000,6 @@ Proving the Beta Equivalence Lemma
 <br>
 <br>
 
-
-Proving the bind function Lemma
---------------------------------
-
-<br>
-A final boring inductive proof... 
-<br>
-
-\begin{code}
-bindAppend :: L a -> L a -> (a -> L b) -> Proof
-{-@ bindAppend :: xs:L a -> ys:L a -> f:(a -> L b)
-     -> { bind (append xs ys) f == append (bind xs f) (bind ys f) }
-  @-}
-bindAppend N ys f 
-  =   bind (append N ys) f 
-  ==. bind ys f 
-  ==. append N (bind ys f)
-  ==. append (bind N f) (bind ys f)
-  *** QED 
-bindAppend (C x xs) ys f 
-  =   bind (append (C x xs) ys) f 
-  ==. bind (C x (append xs ys)) f 
-  ==. append (f x) (bind (append xs ys) f)
-  ==. append (f x) (append (bind xs f) (bind ys f)) 
-       ∵ bindAppend xs ys f 
-  ==. append (append (f x) (bind xs f)) (bind ys f)
-       ∵  appendAssoc (f x) (bind xs f) (bind ys f)
-  ==. append (bind (C x xs) f) (bind ys f)
-  *** QED 
-\end{code}
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 
 
 Summing up the proved laws
