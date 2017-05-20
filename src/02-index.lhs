@@ -62,12 +62,16 @@ Plan
 <br>
 **DONE** 
 
+0. [**Liquid Haskell 101**](http://goto.ucsd.edu/~nvazou/presentations/shonan17/LiquidHaskell101.pdf)
 1. [**Refinements Types:**](02-refinements.html) Types + Predicates + SMT
 2. [**Data Types:**](03-datatypes.html) Measures for Structural Properties
 3. [**Termination**](04-termination.html) Semantic Termination Checking
 4. [**Refinement Reflection**](05-refinement-reflection.html) Expressiveness 
 <br>
 <br>
+
+**Coming up** 
+
 5. [**Proof Automation: **](06-structural-induction.html) Lists are Monads
 6. [**Case Study: **](07-mapReduce.html) Verification MapReduce
 <br>

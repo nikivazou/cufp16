@@ -855,8 +855,8 @@ To prove associativity, lets assume a helper lemma!
 
 \begin{code}
 {-@ automatic-instances bindAppend @-}
-bindAppend :: xs:L a -> ys:L a -> f:(a -> L b)
-     -> { bind (append xs ys) f == append (bind xs f) (bind ys f) }
+{-@ bindAppend :: xs:L a -> ys:L a -> f:(a -> L b)
+     -> { bind (append xs ys) f == append (bind xs f) (bind ys f) } @-}
 bindAppend N _ _ 
   = trivial 
 bindAppend (C x xs) ys f 
