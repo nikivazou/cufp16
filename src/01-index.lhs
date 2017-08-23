@@ -13,8 +13,6 @@
 <br>
 <br>
 <br>
-<h6 style="text-align:center">
-[http://goto.ucsd.edu/~nvazou/presentations/shonan17/01-index.html](http://goto.ucsd.edu/~nvazou/presentations/shonan17/01-index.html) </h6>
 <br>
 <br>
 <br>
@@ -359,35 +357,6 @@ More Bugs: Program Equivalence
 
 
 
-More Bugs: Information Flow 
----------------------
-
-<div class="fragment">
-<br>
-\begin{spec}
-λ> do {submitPaper;  ask "Who else submitted?"}
-
-Current Submissions:
-1. N. Vazou et. al. Liquid Things 
-2. ...
-\end{spec}
-</div>
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
 
 Goal: Extend Type System
 ------------------------
@@ -429,7 +398,6 @@ Plan
 3. [**Termination**](04-termination.html)
 4. [**Refinement Reflection**](05-refinement-reflection.html)
 5. [**Case Study: Verification MapReduce**](07-mapReduce.html)
-6. [**Information Flow Security Policies**](08-security.html)
 <br>
 <br>
 <br>

@@ -605,14 +605,14 @@ Increasing implies monotonic in general!
           -> {f x <= f y} / [y] @-}
 fMono f fUp x y  
   | x + 1 == y
-  = f x   <=. f (x + 1) ? fUp x
-          ==. f y       
-          *** QED
+  = fib x   <=. fib (x + 1) ? fUp x
+            ==. fib y       
+            *** QED
 
   | x + 1 < y
-  = f x   <=. f (y-1)   ? fMono f fUp x (y-1)
-          <=. f y       ? fUp (y-1)
-          *** QED
+  = fib x   <=. fib (y-1)   ? fibMonotonic x y
+            <=. fib y       ? fibUp (y-1)
+            *** QED
 \end{code}
 <br>
 <br>

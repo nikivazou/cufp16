@@ -6,8 +6,8 @@
 {-@ LIQUID "--short-names"    @-}
 {-@ LIQUID "--diff"           @-}
 {-@ LIQUID "--higherorder"    @-}
-{-@ LIQUID "--totality"       @-}
 {-@ LIQUID "--exactdc"        @-}
+{-@ LIQUID "--automatic-instances=liquidinstanceslocal" @-}
 
 module MapReduce where
 
@@ -17,7 +17,9 @@ import Language.Haskell.Liquid.ProofCombinators
 map :: (a -> b) -> List a -> List b
 sumEq :: Int -> List Int -> Proof 
 
-sumRightId :: List Int -> Proof 
+appendAssoc, appendAssocAuto :: List a -> List a -> List a -> Proof 
+
+plusRightId :: List Int -> Proof 
 sumDistr :: List Int -> List Int -> Proof 
 
 mRTheorem :: Int -> (List a -> b) -> (b -> b -> b) 
@@ -50,11 +52,9 @@ Case Study: MapReduce
 <br>
 <br>
 
-[MapReduce](https://en.wikipedia.org/wiki/MapReduce)
-
-  - Chunk Input, 
-  - Map Operation (in parallel), and 
-  - Reduce the results.
+<p align="center">
+<img src="https://pbs.twimg.com/media/Buw8Bz6IIAAxgxg.png" alt="Plane" style="width: 350px;" align="middle" />
+</p>
 
 <br>
 <br>
@@ -162,20 +162,24 @@ Proving Code Equivalence
 -------------------------
 
 \begin{code}
+{-@ automatic-instances sumEq @-}
 {-@ sumEq :: n:Int -> is:List Int -> { sum is == psum n is } @-}
-sumEq n is 
-  =   psum n is 
-  ==. mapReduce n sum plus is 
-  ==. sum is 
-      ? mRTheorem n sum plus sumRightId sumDistr is 
-  *** QED 
+sumEq n is = mRTheorem n             -- chunk size
+                         sum         -- function to map-reduce
+                         plus        -- reduction operator
+                         plusRightId -- plus has "right-identity"
+                         sumDistr    -- sum is "distributive"
+                         is          -- input list
+\end{code}
 
+Using distribution and right identity of `plus`
+\begin{spec}
 {-@ sumDistr   :: xs:List Int -> ys:List Int -> 
       {sum (xs ++ ys) == plus (sum xs) (sum ys)} @-}
 
-{-@ sumRightId :: xs:List Int -> 
+{-@ plusRightId :: xs:List Int -> 
       {plus (sum xs) (sum N) == sum xs} @-}
-\end{code}
+\end{spec}
 
 <br>
 <br>
@@ -197,60 +201,12 @@ sumEq n is
 <br>
 <br>
 
-Sum relevant Proofs 
+Higher Order Map Reduce Theorem
 -------------------
 
-- Right Identity 
+If f is right-id and op distributes ...
 
-\begin{code}
-sumRightId xs 
-  =  plus (sum xs) (sum N) ==. sum xs + 0 ==. sum xs *** QED 
-\end{code}
-
-- Distribution 
-
-\begin{code}
-sumDistr N ys 
-  =   sum (N ++ ys)
-  ==. sum ys
-  ==. plus 0       (sum ys)
-  ==. plus (sum N) (sum ys)
-  *** QED 
-sumDistr (C x xs) ys  
-  =   sum ((C x xs) ++ ys)
-  ==. sum (C x (xs ++ ys))
-  ==. x `plus` (sum (xs ++ ys))
-      ? sumDistr xs ys
-  ==. x `plus` (plus (sum xs) (sum ys))
-  ==. x + (sum xs + sum ys)
-  ==. ((x + sum xs) + sum ys)
-  ==. ((x `plus` sum xs) `plus` sum ys)
-  ==. sum (C x xs) `plus` sum ys
-  *** QED 
-\end{code}
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-Map Reduce Equivalence
------------------------
+... then it is OK to map-reduce. 
 
 \begin{code}
 {-@ mRTheorem :: n:Int -> f:(List a -> b) -> op:(b -> b -> b)
@@ -261,6 +217,253 @@ Map Reduce Equivalence
      -> { mapReduce n f op is == f is }
      / [llen is]
   @-}
+\end{code}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Right Identity 
+-------------------
+
+Lets prove Right Identity 
+
+\begin{code}
+{-@ plusRightId :: xs:List Int -> 
+      {plus (sum xs) (sum N) == sum xs} @-}
+plusRightId xs 
+  =  undefined  
+\end{code}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+Warmup: Associativity of append
+--------------------------------
+
+- Lets prove Associativity of append
+
+\begin{code}
+{-@ appendAssoc :: xs:List a -> ys:List a -> zs:List a 
+                -> { xs ++ (ys ++ zs) == (xs ++ ys) ++ zs } @-}
+appendAssoc xs ys zs = undefined
+\end{code}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+Proof automation: Associativity of Append
+--------------------------------
+
+Proof automation flag automates all the rewriting!
+\begin{code}
+{-@ LIQUID "--automatic-instances=liquidinstanceslocal" @-}
+\end{code}
+
+<br>
+
+\begin{code}
+{-@ automatic-instances appendAssocAuto @-}
+{-@ appendAssocAuto :: xs:List a -> ys:List a -> zs:List a 
+                -> { xs ++ (ys ++ zs) == (xs ++ ys) ++ zs } @-}
+appendAssocAuto N        _  _ = trivial
+appendAssocAuto (C _ xs) ys zs = appendAssocAuto xs ys zs
+\end{code}
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Back to Distribution
+-------------------
+
+- Lets prove distribution
+
+\begin{code}
+{-@ automatic-instances sumDistr @-}
+{-@ sumDistr :: xs:List Int -> ys:List Int -> {sum (xs ++ ys) == plus (sum xs) (sum ys)} @-}
+sumDistr xs ys = undefined 
+\end{code}
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Recap
+-----
+
+<br>
+<br>
+
+-  **Refinement Reflection:** Allow Haskell functions in Logic
+-  <div class="fragment">**Case Study:**</div> Prove Program Equivalence 
+
+<br>
+<br>
+
+Prove crucial properties **for** Haskell **in** Haskell!
+
+<br>
+
+where Haskell = a general purspose programming language.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Recap
+-----
+
+<br>
+<br>
+
+1. **Refinements:** Types + Predicates
+2. **Automation:** SMT Implication
+3. **Measures:** Specify Properties of Data
+4. **Termination:** Semantic Termination Checking
+5. **Reflection:** Allow Haskell functions in Logic! 
+6. <div class="fragment">**Case Study:**</div> Prove Program Equivalence
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+Thank You!
+----------
+
+<br>
+
+`cabal install liquidhaskell`
+
+<br>
+
+[https://github.com/ucsd-progsys/liquidhaskell](https://github.com/ucsd-progsys/liquidhaskell)
+
+<br>
+
+[`http://www.refinement-types.org`](http://www.refinement-types.org)
+
+<br>
+
+[online demo @ http://goto.ucsd.edu/liquidhaskell](http://goto.ucsd.edu/liquidhaskell)
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
+Map Reduce Equivalence
+-----------------------
+
+\begin{code}
 mRTheorem n f op rightId _ N 
   =   mapReduce n f op N 
   ==. reduce op (f N) (map f (chunk n N))
@@ -461,90 +664,4 @@ N ++        ys = ys
 <br>
 
 
-Recap
------
 
-<br>
-<br>
-
--  **Refinement Reflection:** Allow Haskell functions in Logic
--  <div class="fragment">**Case Study:**</div> Prove Program Equivalence 
-
-<br>
-<br>
-
-Prove crucial properties **for** Haskell **in** Haskell!
-
-<br>
-
-where Haskell = a general purspose programming language.
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-Thank You!
-----------
-
-<br>
-
-`cabal install liquidhaskell`
-
-<br>
-
-[https://github.com/ucsd-progsys/liquidhaskell](https://github.com/ucsd-progsys/liquidhaskell)
-
-<br>
-
-[`http://www.refinement-types.org`](http://www.refinement-types.org)
-
-<br>
-
-[online demo @ http://goto.ucsd.edu/liquidhaskell](http://goto.ucsd.edu/liquidhaskell)
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-Recap
------
-
-<br>
-<br>
-
-1. **Refinements:** Types + Predicates
-2. **Automation:** SMT Implication
-3. **Measures:** Specify Properties of Data
-4. **Termination:** Semantic Termination Checking
-5. **Reflection:** Allow Haskell functions in Logic! 
-6. <div class="fragment">**Case Study:**</div> Prove Program Equivalence
-
-<br>
-
-**Next:** [Information Flow](08-security.html): Refinement Types for Security Policies
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
